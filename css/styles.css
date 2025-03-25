@@ -237,9 +237,24 @@ body {
         text-align: center;
     }
 
-    .hero-message {
+    .hero-section {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        padding: 1rem 1rem 6rem;
+        margin-bottom: -5rem;
+    }
+
+    .hero-content .hero-message {
         font-size: 1.25rem;
         padding: 1.25rem;
+    }
+
+    .background-image {
+        padding: 0;
+    }
+
+    .background-image .container {
+        padding: 0;
     }
 
     .hero-image {
