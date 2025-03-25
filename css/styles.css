@@ -106,6 +106,7 @@ body {
 .background-image {
     background-image: url('../bg.jpg');
     background-position: top;
+    object-fit: cover;
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
