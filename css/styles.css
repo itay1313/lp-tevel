@@ -125,7 +125,10 @@ body {
 }
 
 .hero-section {
-    background: var(--gradient-primary);
+    background: linear-gradient(90deg, rgb(85 16 16 / 80%) 0%, rgb(188 34 34 / 80%) 100%),
+        url('../car.jpeg');
+    background-size: cover;
+    background-position: center;
     padding: 2rem 0 8rem;
     text-align: center;
     color: var(--white);
@@ -136,6 +139,8 @@ body {
 }
 
 .hero-content {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;
