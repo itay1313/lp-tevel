@@ -1,6 +1,7 @@
 :root {
     --primary: #FF3434;
     --primary-dark: #BC3535;
+    --gradient-primary: linear-gradient(90deg, #FF3434 0%, #BC3535 100%);
     --white: #FFFFFF;
     --black: #000000;
     --gray-100: #F3F4F6;
@@ -103,24 +104,18 @@ body {
 }
 
 .background-image {
-    background-image: url('url(./World.png)');
-    background-position: center;
+    background-image: url('../bg.jpg');
+    background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
     min-height: calc(100vh - 72px);
-    padding-bottom: 48px;
+    padding: 2rem 0 48px;
+    background-color: #f5f5f5;
 }
 
 .background-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(255, 52, 52, 0.95), rgba(188, 53, 53, 0.85));
-    z-index: 1;
+    content: none;
 }
 
 .background-image .container {
@@ -129,48 +124,45 @@ body {
 }
 
 .hero-section {
-    background: transparent;
-    padding: 4rem 2rem 0;
+    background: var(--gradient-primary);
+    padding: 2rem 0 8rem;
     text-align: center;
     color: var(--white);
-    border-radius: 0 0 40px 40px;
     position: relative;
-    margin-bottom: 70px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: -6rem;
 }
 
 .hero-content {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    max-width: 1200px;
+    max-width: 840px;
     margin: 0 auto;
 }
 
 .hero-messages {
-    flex: 1;
-    max-width: 600px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    text-align: right;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .hero-message {
     font-family: var(--font-family);
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     line-height: 1.6;
     font-weight: 500;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
     margin: 0;
+    text-align: center;
+    padding: 0;
+    background: transparent;
+    border: none;
 }
 
 .hero-image {
@@ -183,12 +175,7 @@ body {
     width: 100%;
     height: auto;
     border-radius: 20px;
-    transform: perspective(1000px) rotateY(-10deg);
-    transition: transform 0.3s ease;
-}
-
-.finance-image:hover {
-    transform: perspective(1000px) rotateY(0deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* Form Container */
@@ -196,7 +183,7 @@ body {
     background: var(--white);
     border-radius: 20px;
     padding: 2.5rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     max-width: 800px;
     margin: 0 auto;
     position: relative;
@@ -448,7 +435,7 @@ body {
 
 .next-btn,
 .submit-btn {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background: var(--gradient-primary);
     color: var(--white);
     border: none;
     box-shadow: 0 4px 6px rgba(255, 52, 52, 0.2);
