@@ -160,4 +160,44 @@ function closePopup() {
 document.querySelector('.consent-checkbox label').addEventListener('click', function (e) {
   e.preventDefault();
   showPopup();
-}); 
+});
+
+function validateFileUpload(input, maxSizeMB) {
+  const uploadArea = input.closest('.upload-area');
+  const errorElement = uploadArea.querySelector('.upload-error') || document.createElement('div');
+
+  if (!errorElement.classList.contains('upload-error')) {
+    errorElement.className = 'upload-error';
+    uploadArea.appendChild(errorElement);
+  }
+
+  // Reset previous errors
+  uploadArea.classList.remove('error');
+  errorElement.textContent = '';
+
+  const maxSizeBytes = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+  const allowedTypes = ['.pdf', '.jpg', '.jpeg', '.png'];
+
+  const files = Array.from(input.files);
+
+  for (const file of files) {
+    // Check file size
+    if (file.size > maxSizeBytes) {
+      uploadArea.classList.add('error');
+      errorElement.textContent = `הקובץ ${file.name} גדול מ-${maxSizeMB}MB`;
+      input.value = ''; // Clear the input
+      return false;
+    }
+
+    // Check file type
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowedTypes.includes(fileExtension)) {
+      uploadArea.classList.add('error');
+      errorElement.textContent = `סוג הקובץ ${fileExtension} אינו נתמך`;
+      input.value = ''; // Clear the input
+      return false;
+    }
+  }
+
+  return true;
+} 
