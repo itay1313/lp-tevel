@@ -906,3 +906,83 @@ textarea {
 .upload-area.error .upload-error {
     display: block;
 }
+
+.file-preview {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 2px dashed #e9ecef;
+    display: none;
+    direction: rtl;
+}
+
+.file-preview.has-files {
+    display: block;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 8px 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.file-item:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.file-item svg {
+    margin-left: 12px;
+    color: #4CAF50;
+    flex-shrink: 0;
+}
+
+.file-item span {
+    font-size: 14px;
+    color: #333;
+}
+
+.remove-file {
+    margin-right: auto;
+    color: #f44336;
+    cursor: pointer;
+    padding: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.remove-file:hover {
+    opacity: 1;
+}
+
+.upload-area {
+    position: relative;
+}
+
+.upload-label {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-label:hover {
+    border-color: #4CAF50;
+    background-color: #f8f9fa;
+}
+
+.file-restrictions {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 12px;
+}

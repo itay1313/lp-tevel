@@ -91,7 +91,7 @@
                                         </label>
                                         <input
                                             type="text"
-                                            name="contact-name"
+                                            name="full_name"
                                             placeholder="שם מלא"
                                             required
                                         >
@@ -100,25 +100,25 @@
                                         <label>
                                             כתובת מייל
                                         </label>
-                                        <input type="email" name="contact-subject" placeholder="your@email.com">
+                                        <input type="email" name="email" placeholder="your@email.com">
                                     </div>
                                     <div class="form-group">
                                         <label>
                                             טלפון נייד
                                         </label>
-                                        <input type="tel" name="contact-phone" placeholder="050-0000000">
+                                        <input type="tel" name="phone" placeholder="050-0000000">
                                     </div>
                                     <div class="form-group">
                                         <label>
                                             מקום העבודה/שם העסק
                                         </label>
-                                        <input type="text" name="SingleLine3" placeholder="שם העסק">
+                                        <input type="text" name="workplace" placeholder="שם העסק">
                                     </div>
                                     <div class="form-group">
                                         <label>
                                             הכנסה חודשית נטו (משק בית)
                                         </label>
-                                        <input type="text" name="SingleLine4" placeholder="הכנסה חודשית">
+                                        <input type="text" name="monthly_income" placeholder="הכנסה חודשית">
                                     </div>
                                     <div class="form-group date-group">
                                         <label>
@@ -128,19 +128,19 @@
                                         <div class="date-inputs">
                                             <input
                                                 type="text"
-                                                name="PhoneNumber4_countrycode"
+                                                name="birth_day"
                                                 maxlength="2"
                                                 placeholder="יום"
                                             >
                                             <input
                                                 type="text"
-                                                name="PhoneNumber4_first"
+                                                name="birth_month"
                                                 maxlength="2"
                                                 placeholder="חודש"
                                             >
                                             <input
                                                 type="text"
-                                                name="PhoneNumber4_second"
+                                                name="birth_year"
                                                 maxlength="4"
                                                 placeholder="שנה"
                                             >
@@ -204,13 +204,13 @@
                                                 <div class="upload-area">
                                                     <input
                                                         type="file"
-                                                        name="ImageUpload"
+                                                        name="id_document"
                                                         accept=".pdf,.jpg,.jpeg,.png"
                                                         capture="environment"
                                                         multiple
                                                         required
                                                         id="idUpload"
-                                                        onchange="validateFileUpload(this, 3)"
+                                                        onchange="handleFileUpload(this, 'idPreview')"
                                                     >
                                                     <label for="idUpload" class="upload-label">
                                                         <svg width="24" height="24" viewBox="0 0 24 24">
@@ -219,6 +219,7 @@
                                                         <span>גרור לכאן או לחץ כדי להעלות קבצים</span>
                                                         <small class="file-restrictions">PDF, JPG, PNG עד 3MB</small>
                                                     </label>
+                                                    <div id="idPreview" class="file-preview"></div>
                                                 </div>
                                             </div>
                                             <div class="upload-box">
@@ -227,12 +228,12 @@
                                                 <div class="upload-area">
                                                     <input
                                                         type="file"
-                                                        name="ImageUpload3"
+                                                        name="drivers_license"
                                                         accept=".pdf,.jpg,.jpeg,.png"
                                                         capture="environment"
                                                         multiple
                                                         id="licenseUpload"
-                                                        onchange="validateFileUpload(this, 3)"
+                                                        onchange="handleFileUpload(this, 'licensePreview')"
                                                     >
                                                     <label for="licenseUpload" class="upload-label">
                                                         <svg width="24" height="24" viewBox="0 0 24 24">
@@ -241,6 +242,7 @@
                                                         <span>גרור לכאן או לחץ כדי להעלות קבצים</span>
                                                         <small class="file-restrictions">PDF, JPG, PNG עד 3MB</small>
                                                     </label>
+                                                    <div id="licensePreview" class="file-preview"></div>
                                                 </div>
                                             </div>
                                         </div>

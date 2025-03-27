@@ -200,4 +200,53 @@ function validateFileUpload(input, maxSizeMB) {
   }
 
   return true;
+}
+
+function handleFileUpload(input, previewId) {
+  const previewDiv = document.getElementById(previewId);
+  previewDiv.innerHTML = '';
+
+  if (input.files && input.files.length > 0) {
+    previewDiv.classList.add('has-files');
+
+    Array.from(input.files).forEach(file => {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+
+      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+
+      fileItem.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                <span>${file.name} (${fileSize} MB)</span>
+                <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
+            `;
+
+      previewDiv.appendChild(fileItem);
+    });
+  } else {
+    previewDiv.classList.remove('has-files');
+  }
+}
+
+function removeFile(element, inputId, previewId) {
+  const input = document.getElementById(inputId);
+  const previewDiv = document.getElementById(previewId);
+
+  // Clear the file input
+  input.value = '';
+
+  // Remove the file item from preview with animation
+  const fileItem = element.parentElement;
+  fileItem.style.opacity = '0';
+  fileItem.style.transform = 'translateX(20px)';
+
+  setTimeout(() => {
+    fileItem.remove();
+    // If no more files, hide preview
+    if (previewDiv.children.length === 0) {
+      previewDiv.classList.remove('has-files');
+    }
+  }, 300);
 } 
