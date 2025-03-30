@@ -312,6 +312,11 @@ body {
     color: var(--gray-700);
 }
 
+.terms-label {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .form-group label .note {
     font-weight: normal;
     color: var(--gray-500);
@@ -844,6 +849,7 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 
 .upload-area input[type="file"] {
@@ -928,12 +934,12 @@ textarea {
     margin: 8px 0;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
 
 .file-item:hover {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .file-item svg {

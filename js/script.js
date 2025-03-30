@@ -204,11 +204,14 @@ function validateFileUpload(input, maxSizeMB) {
 
 function handleFileUpload(input, previewId) {
   const previewDiv = document.getElementById(previewId);
-  previewDiv.innerHTML = '';
 
   if (input.files && input.files.length > 0) {
     previewDiv.classList.add('has-files');
 
+    // Get existing files count
+    const existingFiles = previewDiv.children.length;
+
+    // Add new files
     Array.from(input.files).forEach(file => {
       const fileItem = document.createElement('div');
       fileItem.className = 'file-item';
@@ -216,12 +219,12 @@ function handleFileUpload(input, previewId) {
       const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
       fileItem.innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                </svg>
-                <span>${file.name} (${fileSize} MB)</span>
-                <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
-            `;
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        <span>${file.name} (${fileSize} MB)</span>
+        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
+      `;
 
       previewDiv.appendChild(fileItem);
     });
@@ -233,9 +236,6 @@ function handleFileUpload(input, previewId) {
 function removeFile(element, inputId, previewId) {
   const input = document.getElementById(inputId);
   const previewDiv = document.getElementById(previewId);
-
-  // Clear the file input
-  input.value = '';
 
   // Remove the file item from preview with animation
   const fileItem = element.parentElement;
