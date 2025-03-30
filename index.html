@@ -179,9 +179,46 @@
                                     <div class="form-group full-width">
                                         <label>פרטי חשבון בנק *</label>
                                         <div class="bank-inputs">
-                                            <input type="text" placeholder="מספר בנק" required>
-                                            <input type="text" placeholder="מספר חשבון" required>
-                                            <input type="text" placeholder="מספר סניף" required>
+                                            <div class="custom-select-container">
+                                                <input
+                                                    type="text"
+                                                    id="bankSearch"
+                                                    class="bank-search"
+                                                    placeholder="חפש או בחר בנק..."
+                                                    autocomplete="off"
+                                                    required
+                                                >
+                                                <div class="bank-dropdown" id="bankDropdown">
+                                                    <div class="bank-option" data-value="12" data-name="בנק הפועלים">בנק הפועלים - 12</div>
+                                                    <div class="bank-option" data-value="10" data-name="בנק לאומי">בנק לאומי - 10</div>
+                                                    <div class="bank-option" data-value="11" data-name="בנק דיסקונט">בנק דיסקונט - 11</div>
+                                                    <div class="bank-option" data-value="20" data-name="בנק מזרחי טפחות">בנק מזרחי טפחות - 20</div>
+                                                    <div class="bank-option" data-value="31" data-name="הבנק הבינלאומי">הבנק הבינלאומי - 31</div>
+                                                    <div class="bank-option" data-value="17" data-name="בנק מרכנתיל">בנק מרכנתיל - 17</div>
+                                                    <div class="bank-option" data-value="13" data-name="בנק איגוד">בנק איגוד - 13</div>
+                                                    <div class="bank-option" data-value="14" data-name="בנק אוצר החייל">בנק אוצר החייל - 14</div>
+                                                    <div class="bank-option" data-value="52" data-name="בנק פאגי">בנק פאגי - 52</div>
+                                                    <div class="bank-option" data-value="54" data-name="בנק ירושלים">בנק ירושלים - 54</div>
+                                                </div>
+                                                <input
+                                                    type="hidden"
+                                                    id="selectedBankValue"
+                                                    name="bank_code"
+                                                    required
+                                                >
+                                            </div>
+                                            <input
+                                                type="text"
+                                                name="account_number"
+                                                placeholder="מספר חשבון"
+                                                required
+                                            >
+                                            <input
+                                                type="text"
+                                                name="branch_number"
+                                                placeholder="מספר סניף"
+                                                required
+                                            >
                                         </div>
                                     </div>
                                     <div class="form-group full-width">
@@ -198,49 +235,72 @@
                                     <!-- Document Upload Section -->
                                     <div class="form-group full-width">
                                         <div class="upload-container">
+                                            <div class="upload-header">
+                                                <h3>העלאת מסמכים</h3>
+                                                <p>נא להעלות את המסמכים הבאים לצורך בדיקת הבקשה</p>
+                                            </div>
                                             <div class="upload-box">
-                                                <label>תעודת זהות</label>
-                                                <p class="upload-subtitle">צד קדמי ואחורי בתוקף ספח</p>
-                                                <div class="upload-area">
+                                                <div class="upload-box-header">
+                                                    <label>תעודת זהות</label>
+                                                    <div class="upload-skip-option">
+                                                        <input type="checkbox" id="skipId" class="skip-upload">
+                                                        <label for="skipId">אשלים בהמשך</label>
+                                                    </div>
+                                                </div>
+                                                <p class="upload-subtitle">צד קדמי ואחורי + ספח בתוקף</p>
+                                                <div class="upload-area" id="idUploadArea">
                                                     <input
                                                         type="file"
                                                         name="id_document"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
+                                                        accept="image/*,.pdf"
                                                         capture="environment"
-                                                        multiple
-                                                        required
                                                         id="idUpload"
                                                         onchange="handleFileUpload(this, 'idPreview')"
                                                     >
                                                     <label for="idUpload" class="upload-label">
-                                                        <svg width="24" height="24" viewBox="0 0 24 24">
-                                                            <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
-                                                        </svg>
-                                                        <span>גרור לכאן או לחץ כדי להעלות קבצים</span>
-                                                        <small class="file-restrictions">PDF, JPG, PNG עד 3MB</small>
+                                                        <div class="upload-icon">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="upload-text">
+                                                            <span class="upload-title">העלה קובץ או צלם במצלמה</span>
+                                                            <span class="upload-subtitle">גרור לכאן או לחץ להעלאה</span>
+                                                            <small class="file-restrictions">PDF או תמונה עד 3MB</small>
+                                                        </div>
                                                     </label>
                                                     <div id="idPreview" class="file-preview"></div>
                                                 </div>
                                             </div>
                                             <div class="upload-box">
-                                                <label>רשיון נהיגה</label>
-                                                <p class="upload-subtitle">נא לצלם מקדימה ומאחורה</p>
-                                                <div class="upload-area">
+                                                <div class="upload-box-header">
+                                                    <label>רשיון נהיגה</label>
+                                                    <div class="upload-skip-option">
+                                                        <input type="checkbox" id="skipLicense" class="skip-upload">
+                                                        <label for="skipLicense">אשלים בהמשך</label>
+                                                    </div>
+                                                </div>
+                                                <p class="upload-subtitle">צד קדמי ואחורי בתוקף</p>
+                                                <div class="upload-area" id="licenseUploadArea">
                                                     <input
                                                         type="file"
                                                         name="drivers_license"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
+                                                        accept="image/*,.pdf"
                                                         capture="environment"
-                                                        multiple
                                                         id="licenseUpload"
                                                         onchange="handleFileUpload(this, 'licensePreview')"
                                                     >
                                                     <label for="licenseUpload" class="upload-label">
-                                                        <svg width="24" height="24" viewBox="0 0 24 24">
-                                                            <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
-                                                        </svg>
-                                                        <span>גרור לכאן או לחץ כדי להעלות קבצים</span>
-                                                        <small class="file-restrictions">PDF, JPG, PNG עד 3MB</small>
+                                                        <div class="upload-icon">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="upload-text">
+                                                            <span class="upload-title">העלה קובץ או צלם במצלמה</span>
+                                                            <span class="upload-subtitle">גרור לכאן או לחץ להעלאה</span>
+                                                            <small class="file-restrictions">PDF או תמונה עד 3MB</small>
+                                                        </div>
                                                     </label>
                                                     <div id="licensePreview" class="file-preview"></div>
                                                 </div>

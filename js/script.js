@@ -249,4 +249,174 @@ function removeFile(element, inputId, previewId) {
       previewDiv.classList.remove('has-files');
     }
   }, 300);
-} 
+}
+
+// Bank selection functionality
+document.addEventListener('DOMContentLoaded', function () {
+  const bankSearch = document.getElementById('bankSearch');
+  const bankDropdown = document.getElementById('bankDropdown');
+  const selectedBankValue = document.getElementById('selectedBankValue');
+  const bankOptions = document.querySelectorAll('.bank-option');
+
+  // Show dropdown when clicking on search input
+  bankSearch.addEventListener('click', function (e) {
+    e.stopPropagation();
+    bankDropdown.classList.add('show');
+  });
+
+  // Show dropdown when focusing on search input
+  bankSearch.addEventListener('focus', function () {
+    bankDropdown.classList.add('show');
+  });
+
+  // Handle bank search
+  bankSearch.addEventListener('input', function () {
+    const searchText = this.value.toLowerCase();
+    let hasVisibleOptions = false;
+
+    bankOptions.forEach(option => {
+      const bankName = option.getAttribute('data-name').toLowerCase();
+      const bankValue = option.getAttribute('data-value');
+      const fullText = option.textContent.toLowerCase();
+
+      // Search in bank name, bank code, and full text
+      if (bankName.includes(searchText) ||
+        bankValue.includes(searchText) ||
+        fullText.includes(searchText)) {
+        option.classList.remove('hidden');
+        hasVisibleOptions = true;
+      } else {
+        option.classList.add('hidden');
+      }
+    });
+
+    // Show/hide dropdown based on search results
+    if (hasVisibleOptions) {
+      bankDropdown.classList.add('show');
+    } else {
+      bankDropdown.classList.remove('show');
+    }
+  });
+
+  // Handle bank selection
+  bankOptions.forEach(option => {
+    option.addEventListener('click', function () {
+      const bankName = this.getAttribute('data-name');
+      const bankValue = this.getAttribute('data-value');
+
+      // Update input and hidden value
+      bankSearch.value = `${bankName} - ${bankValue}`;
+      selectedBankValue.value = bankValue;
+
+      // Update visual feedback
+      bankOptions.forEach(opt => opt.classList.remove('selected'));
+      this.classList.add('selected');
+
+      // Hide dropdown
+      bankDropdown.classList.remove('show');
+
+      // Remove any error state
+      removeError(bankSearch);
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!bankSearch.contains(e.target) && !bankDropdown.contains(e.target)) {
+      bankDropdown.classList.remove('show');
+
+      // If no bank is selected and search is empty, show error
+      if (!selectedBankValue.value && !bankSearch.value) {
+        showError(bankSearch, 'נא לבחור בנק');
+      }
+    }
+  });
+
+  // Prevent form submission on enter key in search
+  bankSearch.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      // If only one option is visible, select it
+      const visibleOptions = Array.from(bankOptions).filter(opt => !opt.classList.contains('hidden'));
+      if (visibleOptions.length === 1) {
+        visibleOptions[0].click();
+      }
+    }
+  });
+});
+
+// File Upload Handling
+function initializeFileUploads() {
+  const uploadBoxes = document.querySelectorAll('.upload-box');
+
+  uploadBoxes.forEach(box => {
+    const fileInput = box.querySelector('input[type="file"]');
+    const skipCheckbox = box.querySelector('.skip-upload');
+    const uploadArea = box.querySelector('.upload-area');
+    const filePreview = box.querySelector('.file-preview');
+    const uploadedFiles = new Set();
+
+    if (skipCheckbox) {
+      skipCheckbox.addEventListener('change', (e) => {
+        uploadArea.classList.toggle('disabled', e.target.checked);
+      });
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener('change', handleFileSelection);
+    }
+
+    function handleFileSelection(e) {
+      const files = Array.from(e.target.files);
+
+      files.forEach(file => {
+        if (!uploadedFiles.has(file.name)) {
+          uploadedFiles.add(file.name);
+          addFilePreview(file);
+        }
+      });
+
+      if (uploadedFiles.size > 0) {
+        filePreview.classList.add('has-files');
+      }
+    }
+
+    function addFilePreview(file) {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+
+      // Check icon
+      const checkIcon = document.createElement('span');
+      checkIcon.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      // File name
+      const fileName = document.createElement('span');
+      fileName.textContent = file.name;
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-file';
+      removeBtn.innerHTML = '×';
+      removeBtn.onclick = () => {
+        fileItem.remove();
+        uploadedFiles.delete(file.name);
+
+        if (uploadedFiles.size === 0) {
+          filePreview.classList.remove('has-files');
+        }
+      };
+
+      fileItem.appendChild(checkIcon);
+      fileItem.appendChild(fileName);
+      fileItem.appendChild(removeBtn);
+      filePreview.appendChild(fileItem);
+    }
+  });
+}
+
+// Initialize all components
+document.addEventListener('DOMContentLoaded', () => {
+  initializeFileUploads();
+  // ... existing initialization code ...
+}); 
