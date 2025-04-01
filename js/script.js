@@ -1,15 +1,12 @@
 // Form validation and step handling
 function showError(input, message) {
-  const formGroup = input.closest('.form-group') || input.closest('.consent-checkbox');
-  let errorDiv = formGroup.querySelector('.error-message');
-
-  if (!errorDiv) {
-    errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
+  const formGroup = input.closest('.form-group');
+  const errorDiv = formGroup.querySelector('.error-message') || document.createElement('div');
+  errorDiv.className = 'error-message';
+  errorDiv.textContent = message;
+  if (!formGroup.querySelector('.error-message')) {
     formGroup.appendChild(errorDiv);
   }
-
-  errorDiv.textContent = message;
   input.classList.add('error');
 }
 
@@ -27,39 +24,24 @@ function validateStep(stepNumber) {
   const requiredInputs = step.querySelectorAll('input[required]');
   let isValid = true;
 
-  requiredInputs.forEach(field => {
-    // Skip hidden fields
-    if (field.type === 'hidden') return;
-
-    // For credit card field
-    if (field.name === 'credit_card') {
-      const cardNumber = field.value.replace(/\s/g, '');
-      if (cardNumber.length < 13) {
-        showError(field, 'נא להזין מספר כרטיס תקין');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
-      return;
-    }
-
-    // For checkboxes
-    if (field.type === 'checkbox') {
-      if (!field.checked) {
-        showError(field, 'נא לאשר את ההסכמה');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
-      return;
-    }
-
-    // For other fields
-    if (!field.value.trim()) {
-      showError(field, 'שדה חובה');
+  requiredInputs.forEach(input => {
+    if (!input.value.trim()) {
+      showError(input, 'שדה חובה');
       isValid = false;
     } else {
-      removeError(field);
+      removeError(input);
+
+      // Validate email format
+      if (input.type === 'email' && !/\S+@\S+\.\S+/.test(input.value)) {
+        showError(input, 'כתובת אימייל לא תקינה');
+        isValid = false;
+      }
+
+      // Validate phone number format
+      if (input.name === 'PhoneNumber1_countrycode' && !/^\d{3}-?\d{7}$/.test(input.value)) {
+        showError(input, 'מספר טלפון לא תקין');
+        isValid = false;
+      }
     }
   });
 
@@ -123,39 +105,38 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   const currentStep = document.querySelector('.form-step.active');
   if (!currentStep) return;
 
-  // Only validate fields in the current step
-  const currentStepFields = currentStep.querySelectorAll('input[required]');
+  // Validate only required fields in the current step
+  const requiredFields = currentStep.querySelectorAll('[required]');
   let isValid = true;
 
-  currentStepFields.forEach(field => {
-    // Skip hidden fields
+  requiredFields.forEach(field => {
+    // Skip validation for hidden fields
     if (field.type === 'hidden') return;
 
-    // For credit card field
+    // For credit card, check if it's a valid number
     if (field.name === 'credit_card') {
       const cardNumber = field.value.replace(/\s/g, '');
-      if (cardNumber.length < 13) {
+      if (cardNumber.length < 13 || cardNumber.length > 19) {
+        showError(field, 'נא להזין מספר כרטיס תקין');
+        isValid = false;
+      } else if (!isValidLuhn(cardNumber)) {
         showError(field, 'נא להזין מספר כרטיס תקין');
         isValid = false;
       } else {
         removeError(field);
       }
-      return;
     }
-
-    // For checkboxes
-    if (field.type === 'checkbox') {
+    // For checkboxes, check if they're checked
+    else if (field.type === 'checkbox') {
       if (!field.checked) {
         showError(field, 'נא לאשר את ההסכמה');
         isValid = false;
       } else {
         removeError(field);
       }
-      return;
     }
-
-    // For other fields
-    if (!field.value.trim()) {
+    // For other required fields
+    else if (!field.value.trim()) {
       showError(field, 'שדה חובה');
       isValid = false;
     } else {
@@ -167,14 +148,13 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     return;
   }
 
-  const formData = new FormData(this);
-
   const submitBtn = document.querySelector('.submit-btn');
   const originalText = submitBtn.innerHTML;
   submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
   submitBtn.disabled = true;
 
   try {
+    const formData = new FormData(this);
     const response = await fetch(this.action, {
       method: 'POST',
       body: formData
@@ -331,57 +311,38 @@ function validateFileUpload(input, maxSizeMB) {
 
 function handleFileUpload(input, previewId) {
   const previewDiv = document.getElementById(previewId);
-  const uploadArea = input.closest('.upload-area');
 
   if (input.files && input.files.length > 0) {
-    // Clear existing previews first
-    previewDiv.innerHTML = '';
+    previewDiv.classList.add('has-files');
 
+    // Get existing files count
+    const existingFiles = previewDiv.children.length;
+
+    // Add new files
     Array.from(input.files).forEach(file => {
-      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
       const fileItem = document.createElement('div');
       fileItem.className = 'file-item';
 
-      // Add hidden input for file name
-      const fileNameInput = document.createElement('input');
-      fileNameInput.type = 'hidden';
-      fileNameInput.name = `${input.name}_fileName`;
-      fileNameInput.value = file.name;
-      input.parentElement.appendChild(fileNameInput);
+      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
       fileItem.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
         </svg>
         <span>${file.name} (${fileSize} MB)</span>
-        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}', '${file.name}')">×</span>
+        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
       `;
 
       previewDiv.appendChild(fileItem);
     });
-
-    previewDiv.classList.add('has-files');
-    uploadArea.classList.add('has-files');
   } else {
-    previewDiv.innerHTML = '';
     previewDiv.classList.remove('has-files');
-    uploadArea.classList.remove('has-files');
   }
 }
 
-function removeFile(element, inputId, previewId, fileName) {
+function removeFile(element, inputId, previewId) {
   const input = document.getElementById(inputId);
   const previewDiv = document.getElementById(previewId);
-  const uploadArea = input.closest('.upload-area');
-
-  // Remove the hidden filename input
-  const fileNameInput = input.parentElement.querySelector(`input[name="${input.name}_fileName"][value="${fileName}"]`);
-  if (fileNameInput) {
-    fileNameInput.remove();
-  }
-
-  // Clear the file input
-  input.value = '';
 
   // Remove the file item from preview with animation
   const fileItem = element.parentElement;
@@ -393,7 +354,6 @@ function removeFile(element, inputId, previewId, fileName) {
     // If no more files, hide preview
     if (previewDiv.children.length === 0) {
       previewDiv.classList.remove('has-files');
-      uploadArea.classList.remove('has-files');
     }
   }, 300);
 }
@@ -562,10 +522,12 @@ function initializeFileUploads() {
   });
 }
 
-// Credit Card Validation - Simplified
+// Credit Card Validation
 function initializeCreditCardValidation() {
   const creditCardInput = document.getElementById('creditCard');
-  if (!creditCardInput) return;
+  const creditCardError = document.getElementById('creditCardError');
+
+  if (!creditCardInput || !creditCardError) return;
 
   creditCardInput.addEventListener('input', function (e) {
     // Remove any non-digit characters
@@ -576,24 +538,21 @@ function initializeCreditCardValidation() {
 
     // Update the input value
     e.target.value = value;
+
+    // Simple validation - just check if we have at least 13 digits
+    if (value.replace(/\s/g, '').length >= 13) {
+      creditCardError.textContent = '';
+      creditCardInput.classList.remove('error');
+    } else {
+      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
+      creditCardInput.classList.add('error');
+    }
   });
 }
 
 // Initialize all components
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize skip upload checkboxes
-  const uploadBoxes = document.querySelectorAll('.upload-box');
-  uploadBoxes.forEach(box => {
-    const skipCheckbox = box.querySelector('.skip-upload');
-    const uploadArea = box.querySelector('.upload-area');
-
-    if (skipCheckbox) {
-      skipCheckbox.addEventListener('change', (e) => {
-        uploadArea.classList.toggle('disabled', e.target.checked);
-      });
-    }
-  });
-
+  initializeFileUploads();
   initializeCreditCardValidation();
-  // ... any other initialization code ...
+  // ... existing initialization code ...
 }); 
