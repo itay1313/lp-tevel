@@ -530,66 +530,100 @@
                 });
             }
 
-            // Function to handle file upload and preview
+            // Store uploaded files for each upload area
+            const uploadedFiles = {};
+
             function handleFileUpload(input, previewId) {
                 const previewArea = document.getElementById(previewId);
                 const files = input.files;
                 
                 if (files && files[0]) {
-                    const file = files[0];
-                    
-                    // Create preview element
-                    const previewElement = document.createElement('div');
-                    previewElement.className = 'file-item';
-                    
-                    if (file.type.startsWith('image/')) {
-                        // For images
-                        const img = document.createElement('img');
-                        img.src = URL.createObjectURL(file);
-                        img.onload = function() {
-                            URL.revokeObjectURL(this.src);
-                        };
-                        previewElement.appendChild(img);
-                    } else {
-                        // For PDFs or other files
-                        const icon = document.createElement('div');
-                        icon.className = 'file-icon';
-                        icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>';
-                        previewElement.appendChild(icon);
+                    // Initialize array for this upload area if it doesn't exist
+                    if (!uploadedFiles[previewId]) {
+                        uploadedFiles[previewId] = [];
                     }
                     
-                    // Add file name
-                    const fileName = document.createElement('div');
-                    fileName.className = 'file-name';
-                    fileName.textContent = file.name;
-                    previewElement.appendChild(fileName);
+                    const file = files[0];
                     
-                    // Add remove button
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-file';
-                    removeBtn.innerHTML = '&times;';
-                    removeBtn.onclick = function(e) {
-                        e.preventDefault();
-                        previewArea.innerHTML = '';
-                        input.value = ''; // Clear the input
-                        
-                        // Show upload label again
-                        const uploadArea = input.closest('.upload-area');
-                        const uploadLabel = uploadArea.querySelector('.upload-label');
-                        uploadLabel.style.display = 'flex';
-                        previewArea.style.display = 'none';
-                    };
-                    previewElement.appendChild(removeBtn);
+                    // Check if file is already uploaded
+                    if (uploadedFiles[previewId].some(f => f.name === file.name)) {
+                        return; // Skip if file already exists
+                    }
                     
-                    // Clear previous preview and add new one
+                    // Add file to our tracking array
+                    uploadedFiles[previewId].push(file);
+                    
+                    // Clear the preview area
                     previewArea.innerHTML = '';
-                    previewArea.appendChild(previewElement);
                     
-                    // Hide the upload label and show preview
+                    // Create preview elements for all files
+                    uploadedFiles[previewId].forEach((uploadedFile, index) => {
+                        const previewElement = document.createElement('div');
+                        previewElement.className = 'file-item';
+                        
+                        if (uploadedFile.type.startsWith('image/')) {
+                            const img = document.createElement('img');
+                            img.src = URL.createObjectURL(uploadedFile);
+                            img.onload = function() {
+                                URL.revokeObjectURL(this.src);
+                            };
+                            previewElement.appendChild(img);
+                        } else {
+                            const icon = document.createElement('div');
+                            icon.className = 'file-icon';
+                            icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>';
+                            previewElement.appendChild(icon);
+                        }
+                        
+                        const fileName = document.createElement('div');
+                        fileName.className = 'file-name';
+                        fileName.textContent = uploadedFile.name;
+                        previewElement.appendChild(fileName);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-file';
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.onclick = function(e) {
+                            e.preventDefault();
+                            // Remove file from array
+                            uploadedFiles[previewId].splice(index, 1);
+                            // Refresh the preview
+                            handleFileUpload(input, previewId);
+                        };
+                        previewElement.appendChild(removeBtn);
+                        
+                        previewArea.appendChild(previewElement);
+                    });
+                    
+                    // Add "Upload another file" button if there's room for more files
+                    if (uploadedFiles[previewId].length < 2) { // Limit to 2 files
+                        const uploadAnotherBtn = document.createElement('button');
+                        uploadAnotherBtn.className = 'upload-another-btn';
+                        uploadAnotherBtn.innerHTML = 'העלה קובץ נוסף';
+                        uploadAnotherBtn.onclick = function(e) {
+                            e.preventDefault();
+                            input.click();
+                        };
+                        previewArea.appendChild(uploadAnotherBtn);
+                    }
+                    
+                    // Show preview area and hide upload label
                     const uploadArea = input.closest('.upload-area');
                     const uploadLabel = uploadArea.querySelector('.upload-label');
                     uploadLabel.style.display = 'none';
                     previewArea.style.display = 'block';
+                    
+                    // Clear the input
+                    input.value = '';
+                }
+                
+                // If no files are uploaded, show the original upload label
+                if (!uploadedFiles[previewId] || uploadedFiles[previewId].length === 0) {
+                    const uploadArea = input.closest('.upload-area');
+                    const uploadLabel = uploadArea.querySelector('.upload-label');
+                    uploadLabel.style.display = 'flex';
+                    previewArea.style.display = 'none';
+                    previewArea.innerHTML = '';
                 }
             }
 
@@ -626,6 +660,11 @@
                 background: white;
                 border-radius: 6px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                margin-bottom: 10px;
+            }
+            
+            .file-item:last-of-type {
+                margin-bottom: 15px;
             }
             
             .file-item img {
@@ -672,6 +711,26 @@
             .upload-label {
                 display: flex;
                 cursor: pointer;
+            }
+
+            .upload-another-btn {
+                display: block;
+                width: 100%;
+                padding: 12px;
+                background: #f8f9fa;
+                border: 1px dashed #dee2e6;
+                border-radius: 6px;
+                color: #495057;
+                font-size: 14px;
+                cursor: pointer;
+                text-align: center;
+                transition: all 0.2s ease;
+            }
+            
+            .upload-another-btn:hover {
+                background: #e9ecef;
+                border-color: #adb5bd;
+                color: #212529;
             }
         </style>
     </body>
