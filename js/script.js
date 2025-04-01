@@ -220,7 +220,6 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     }
   } catch (error) {
     console.error('Form submission error:', error);
-    alert('שגיאה בשליחת הטופס, נא לנסות שוב');
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
