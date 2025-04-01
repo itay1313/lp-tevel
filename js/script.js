@@ -101,12 +101,42 @@ function prevStep(currentStep) {
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  // Validate all required fields
-  const requiredFields = this.querySelectorAll('[required]');
+  // Get the current active step
+  const currentStep = document.querySelector('.form-step.active');
+  if (!currentStep) return;
+
+  // Validate only required fields in the current step
+  const requiredFields = currentStep.querySelectorAll('[required]');
   let isValid = true;
 
   requiredFields.forEach(field => {
-    if (!field.value.trim()) {
+    // Skip validation for hidden fields
+    if (field.type === 'hidden') return;
+
+    // For credit card, check if it's a valid number
+    if (field.name === 'credit_card') {
+      const cardNumber = field.value.replace(/\s/g, '');
+      if (cardNumber.length < 13 || cardNumber.length > 19) {
+        showError(field, 'נא להזין מספר כרטיס תקין');
+        isValid = false;
+      } else if (!isValidLuhn(cardNumber)) {
+        showError(field, 'נא להזין מספר כרטיס תקין');
+        isValid = false;
+      } else {
+        removeError(field);
+      }
+    }
+    // For checkboxes, check if they're checked
+    else if (field.type === 'checkbox') {
+      if (!field.checked) {
+        showError(field, 'נא לאשר את ההסכמה');
+        isValid = false;
+      } else {
+        removeError(field);
+      }
+    }
+    // For other required fields
+    else if (!field.value.trim()) {
       showError(field, 'שדה חובה');
       isValid = false;
     } else {
@@ -509,58 +539,15 @@ function initializeCreditCardValidation() {
     // Update the input value
     e.target.value = value;
 
-    // Only validate if we have at least 13 digits
+    // Simple validation - just check if we have at least 13 digits
     if (value.replace(/\s/g, '').length >= 13) {
-      validateCreditCard(value.replace(/\s/g, ''));
-    } else {
-      // Clear error if we don't have enough digits yet
       creditCardError.textContent = '';
       creditCardInput.classList.remove('error');
+    } else {
+      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
+      creditCardInput.classList.add('error');
     }
   });
-
-  function validateCreditCard(number) {
-    // Basic length check
-    if (number.length < 13 || number.length > 19) {
-      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
-      creditCardInput.classList.add('error');
-      return false;
-    }
-
-    // Check if it's a valid card number using Luhn algorithm
-    if (!isValidLuhn(number)) {
-      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
-      creditCardInput.classList.add('error');
-      return false;
-    }
-
-    // Valid card
-    creditCardError.textContent = '';
-    creditCardInput.classList.remove('error');
-    return true;
-  }
-
-  function isValidLuhn(number) {
-    let sum = 0;
-    let isEven = false;
-
-    // Loop through values starting from the rightmost
-    for (let i = number.length - 1; i >= 0; i--) {
-      let digit = parseInt(number[i]);
-
-      if (isEven) {
-        digit *= 2;
-        if (digit > 9) {
-          digit -= 9;
-        }
-      }
-
-      sum += digit;
-      isEven = !isEven;
-    }
-
-    return (sum % 10) === 0;
-  }
 }
 
 // Initialize all components
