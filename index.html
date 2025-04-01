@@ -79,7 +79,19 @@
                             <input type="hidden" name="zc_gad" value="">
                             <input type="hidden" name="xmIwtLD" value="your-form-id">
                             <input type="hidden" name="actionType" value="TGVhZHM=">
-                            <input type="hidden" name="returnURL" value="your-return-url">
+                            <input type="hidden" name="returnURL" value="">
+                            <input
+                                type="hidden"
+                                name="Last_Name"
+                                id="last_name_hidden"
+                                value=""
+                            >
+                            <input
+                                type="hidden"
+                                name="Mobile"
+                                id="mobile_hidden"
+                                value=""
+                            >
                             <!-- Step 1: Personal Details -->
                             <div class="form-step active" id="step1">
                                 <div class="form-grid">
@@ -415,5 +427,252 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
         <script src="./js/script.js"></script>
+        <script>
+            // Function to set initial values and handle changes
+            function updateHiddenFields() {
+                const fullNameInput = document.querySelector('input[name="full_name"]');
+                const phoneInput = document.querySelector('input[name="phone"]');
+                const lastNameHidden = document.getElementById('last_name_hidden');
+                const mobileHidden = document.getElementById('mobile_hidden');
+
+                // Set initial values if they exist
+                if (fullNameInput && fullNameInput.value) {
+                    lastNameHidden.value = fullNameInput.value;
+                }
+                if (phoneInput && phoneInput.value) {
+                    mobileHidden.value = phoneInput.value;
+                }
+
+                // Add event listeners for changes
+                fullNameInput.addEventListener('input', function(e) {
+                    lastNameHidden.value = e.target.value;
+                });
+                
+                phoneInput.addEventListener('input', function(e) {
+                    mobileHidden.value = e.target.value;
+                });
+            }
+
+            // Call the function when the document is ready
+            document.addEventListener('DOMContentLoaded', updateHiddenFields);
+
+            // Handle form submission
+            document.getElementById('tevelForm').addEventListener('submit', async function(e) {
+                e.preventDefault(); // Prevent default form submission
+                
+                // Get the form values
+                const fullName = document.querySelector('input[name="full_name"]').value;
+                const phone = document.querySelector('input[name="phone"]').value;
+                
+                // Set the hidden fields explicitly
+                document.getElementById('last_name_hidden').value = fullName;
+                document.getElementById('mobile_hidden').value = phone;
+                
+                // Double check that values are set
+                if (!document.getElementById('last_name_hidden').value || !document.getElementById('mobile_hidden').value) {
+                    alert('נא למלא את כל השדות הנדרשים');
+                    return;
+                }
+                
+                try {
+                    // Show thank you message before submission
+                    showThankYouMessage();
+                    
+                    // Submit form data using fetch
+                    const formData = new FormData(this);
+                    await fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'no-cors' // Add this to prevent CORS issues
+                    });
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Form was already replaced with thank you message, so no need to show error
+                }
+            });
+
+            // Function to show thank you message
+            function showThankYouMessage() {
+                const formContainer = document.querySelector('.form-container');
+                const heroMessages = document.querySelector('.hero-messages');
+                
+                // Update hero message
+                if (heroMessages) {
+                    heroMessages.innerHTML = `
+                        <p class="hero-message">
+                            לקוח יקר,<br>
+                            תודה רבה על זמנך היקר,<br>
+                            בעוד דקות ספורות תקבל תשובה עקרונית לגבי זכאותך למימון
+                        </p>
+                    `;
+                }
+                
+                // Update form container
+                formContainer.innerHTML = `
+                    <div class="thank-you-container" style="text-align: center; padding: 40px 20px;">
+                        <svg class="thank-you-icon" viewBox="0 0 24 24" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                            <path fill="#4CAF50" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h1 style="font-size: 24px; font-weight: 700; color: #2C3E50; margin-bottom: 16px;">תודה רבה!</h1>
+                        <p style="font-size: 18px; color: #34495E; line-height: 1.6;">
+                            פנייתך התקבלה בהצלחה.<br>
+                            נציג שלנו יצור איתך קשר בהקדם האפשרי.
+                        </p>
+                    </div>
+                `;
+                
+                // Trigger confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            // Function to handle file upload and preview
+            function handleFileUpload(input, previewId) {
+                const previewArea = document.getElementById(previewId);
+                const files = input.files;
+                
+                if (files && files[0]) {
+                    const file = files[0];
+                    
+                    // Create preview element
+                    const previewElement = document.createElement('div');
+                    previewElement.className = 'file-item';
+                    
+                    if (file.type.startsWith('image/')) {
+                        // For images
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.onload = function() {
+                            URL.revokeObjectURL(this.src);
+                        };
+                        previewElement.appendChild(img);
+                    } else {
+                        // For PDFs or other files
+                        const icon = document.createElement('div');
+                        icon.className = 'file-icon';
+                        icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>';
+                        previewElement.appendChild(icon);
+                    }
+                    
+                    // Add file name
+                    const fileName = document.createElement('div');
+                    fileName.className = 'file-name';
+                    fileName.textContent = file.name;
+                    previewElement.appendChild(fileName);
+                    
+                    // Add remove button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-file';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = function(e) {
+                        e.preventDefault();
+                        previewArea.innerHTML = '';
+                        input.value = ''; // Clear the input
+                        
+                        // Show upload label again
+                        const uploadArea = input.closest('.upload-area');
+                        const uploadLabel = uploadArea.querySelector('.upload-label');
+                        uploadLabel.style.display = 'flex';
+                        previewArea.style.display = 'none';
+                    };
+                    previewElement.appendChild(removeBtn);
+                    
+                    // Clear previous preview and add new one
+                    previewArea.innerHTML = '';
+                    previewArea.appendChild(previewElement);
+                    
+                    // Hide the upload label and show preview
+                    const uploadArea = input.closest('.upload-area');
+                    const uploadLabel = uploadArea.querySelector('.upload-label');
+                    uploadLabel.style.display = 'none';
+                    previewArea.style.display = 'block';
+                }
+            }
+
+            // Add this to your existing script section
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize file upload areas
+                const uploadAreas = document.querySelectorAll('.upload-area');
+                uploadAreas.forEach(area => {
+                    const input = area.querySelector('input[type="file"]');
+                    const previewArea = area.querySelector('.file-preview');
+                    const uploadLabel = area.querySelector('.upload-label');
+
+                    // Reset file upload areas to initial state
+                    input.value = '';
+                    previewArea.innerHTML = '';
+                    uploadLabel.style.display = 'flex';
+                    previewArea.style.display = 'none';
+                });
+            });
+        </script>
+        <style>
+            .file-preview {
+                display: none;
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 8px;
+                background: #f8f9fa;
+            }
+            
+            .file-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                background: white;
+                border-radius: 6px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            
+            .file-item img {
+                max-width: 60px;
+                max-height: 60px;
+                border-radius: 4px;
+                margin-left: 10px;
+            }
+            
+            .file-icon {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #e9ecef;
+                border-radius: 4px;
+                margin-left: 10px;
+            }
+            
+            .file-name {
+                flex-grow: 1;
+                font-size: 14px;
+                color: #495057;
+            }
+            
+            .remove-file {
+                background: none;
+                border: none;
+                color: #dc3545;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0 8px;
+            }
+            
+            .remove-file:hover {
+                color: #c82333;
+            }
+            
+            .upload-area {
+                position: relative;
+            }
+            
+            .upload-label {
+                display: flex;
+                cursor: pointer;
+            }
+        </style>
     </body>
 </html>
