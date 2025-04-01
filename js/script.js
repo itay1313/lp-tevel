@@ -1,12 +1,15 @@
 // Form validation and step handling
 function showError(input, message) {
-  const formGroup = input.closest('.form-group');
-  const errorDiv = formGroup.querySelector('.error-message') || document.createElement('div');
-  errorDiv.className = 'error-message';
-  errorDiv.textContent = message;
-  if (!formGroup.querySelector('.error-message')) {
+  const formGroup = input.closest('.form-group') || input.closest('.consent-checkbox');
+  let errorDiv = formGroup.querySelector('.error-message');
+
+  if (!errorDiv) {
+    errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
     formGroup.appendChild(errorDiv);
   }
+
+  errorDiv.textContent = message;
   input.classList.add('error');
 }
 
@@ -25,6 +28,21 @@ function validateStep(stepNumber) {
   let isValid = true;
 
   requiredInputs.forEach(input => {
+    // Skip hidden inputs
+    if (input.type === 'hidden') return;
+
+    // For checkboxes
+    if (input.type === 'checkbox') {
+      if (!input.checked) {
+        showError(input, 'נא לאשר את ההסכמה');
+        isValid = false;
+      } else {
+        removeError(input);
+      }
+      return;
+    }
+
+    // For regular inputs
     if (!input.value.trim()) {
       showError(input, 'שדה חובה');
       isValid = false;
@@ -101,20 +119,20 @@ function prevStep(currentStep) {
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  // Get all form data
+  // Get the current active step
+  const currentStep = document.querySelector('.form-step.active');
+  if (!currentStep) return;
+
+  // Check if we're on step 2 (where creditConsent is)
+  if (currentStep.id === 'step2') {
+    const creditConsent = document.getElementById('creditConsent');
+    if (creditConsent && !creditConsent.checked) {
+      showError(creditConsent, 'נא לאשר את ההסכמה');
+      return;
+    }
+  }
+
   const formData = new FormData(this);
-
-  // Remove validation for credit consent and credit card
-  const creditConsent = document.getElementById('creditConsent');
-  if (creditConsent) {
-    creditConsent.removeAttribute('required');
-  }
-
-  const creditCard = document.getElementById('creditCard');
-  if (creditCard) {
-    creditCard.removeAttribute('required');
-    creditCard.removeAttribute('pattern');
-  }
 
   const submitBtn = document.querySelector('.submit-btn');
   const originalText = submitBtn.innerHTML;
@@ -174,15 +192,6 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
-
-    // Restore the required attributes after submission attempt
-    if (creditConsent) {
-      creditConsent.setAttribute('required', '');
-    }
-    if (creditCard) {
-      creditCard.setAttribute('required', '');
-      creditCard.setAttribute('pattern', '[0-9\\s]{13,19}');
-    }
   }
 });
 
