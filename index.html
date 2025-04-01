@@ -171,6 +171,7 @@
                                                     id="creditConsent"
                                                     name="creditConsent"
                                                     required
+                                                    autocomplete="off"
                                                 >
                                                 <label class="terms-label" for="creditConsent">הריני מאשר לחברת תבל</label>
                                             </div>
@@ -223,7 +224,17 @@
                                     </div>
                                     <div class="form-group full-width">
                                         <label>פרטי כרטיס אשראי *</label>
-                                        <input type="text" placeholder="מספר כרטיס אשראי" required>
+                                        <input
+                                            type="text"
+                                            name="credit_card"
+                                            id="creditCard"
+                                            placeholder="מספר כרטיס אשראי"
+                                            required
+                                            pattern="[0-9\s]{13,19}"
+                                            maxlength="19"
+                                            autocomplete="cc-number"
+                                        >
+                                        <div class="error-message" id="creditCardError"></div>
                                     </div>
                                     <div class="form-group full-width">
                                         <label>תוקף *</label>
@@ -402,6 +413,7 @@
                 </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
         <script src="./js/script.js"></script>
     </body>
 </html>

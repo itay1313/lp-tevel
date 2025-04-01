@@ -101,7 +101,20 @@ function prevStep(currentStep) {
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  if (!validateStep(3)) {
+  // Validate all required fields
+  const requiredFields = this.querySelectorAll('[required]');
+  let isValid = true;
+
+  requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+      showError(field, 'שדה חובה');
+      isValid = false;
+    } else {
+      removeError(field);
+    }
+  });
+
+  if (!isValid) {
     return;
   }
 
@@ -118,11 +131,44 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     });
 
     if (response.ok) {
-      showMessage('הטופס נשלח בהצלחה! נציג יצור איתך קשר בהקדם.', 'success');
-      this.reset();
-      document.getElementById('step1').classList.add('active');
-      document.getElementById('step3').classList.remove('active');
-      updateProgressBar(1);
+      // Hide all form steps
+      document.querySelectorAll('.form-step').forEach(step => {
+        step.style.display = 'none';
+      });
+
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.className = 'success-message';
+      successMessage.innerHTML = `
+        <div class="success-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#4CAF50"/>
+          </svg>
+        </div>
+        <h2>תודה רבה!</h2>
+        <p>הטופס נשלח בהצלחה</p>
+        <p class="success-details">נציג יצור איתך קשר בהקדם להמשך התהליך</p>
+      `;
+
+      // Insert success message before the form
+      const formContainer = document.querySelector('.form-container');
+      formContainer.insertBefore(successMessage, this);
+
+      // Trigger confetti
+      triggerConfetti();
+
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        this.reset();
+        successMessage.remove();
+        document.querySelectorAll('.form-step').forEach(step => {
+          step.style.display = 'block';
+        });
+        document.getElementById('step1').classList.add('active');
+        document.getElementById('step3').classList.remove('active');
+        updateProgressBar(1);
+      }, 5000);
+
     } else {
       throw new Error('שגיאה בשליחת הטופס');
     }
@@ -133,6 +179,37 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     submitBtn.disabled = false;
   }
 });
+
+// Confetti effect
+function triggerConfetti() {
+  const duration = 3000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+  function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  const interval = setInterval(function () {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+    });
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+    });
+  }, 250);
+}
 
 function showMessage(message, type) {
   const messageDiv = document.createElement('div');
@@ -415,8 +492,80 @@ function initializeFileUploads() {
   });
 }
 
+// Credit Card Validation
+function initializeCreditCardValidation() {
+  const creditCardInput = document.getElementById('creditCard');
+  const creditCardError = document.getElementById('creditCardError');
+
+  if (!creditCardInput || !creditCardError) return;
+
+  creditCardInput.addEventListener('input', function (e) {
+    // Remove any non-digit characters
+    let value = e.target.value.replace(/\D/g, '');
+
+    // Format the number with spaces every 4 digits
+    value = value.replace(/(\d{4})/g, '$1 ').trim();
+
+    // Update the input value
+    e.target.value = value;
+
+    // Only validate if we have at least 13 digits
+    if (value.replace(/\s/g, '').length >= 13) {
+      validateCreditCard(value.replace(/\s/g, ''));
+    } else {
+      // Clear error if we don't have enough digits yet
+      creditCardError.textContent = '';
+      creditCardInput.classList.remove('error');
+    }
+  });
+
+  function validateCreditCard(number) {
+    // Basic length check
+    if (number.length < 13 || number.length > 19) {
+      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
+      creditCardInput.classList.add('error');
+      return false;
+    }
+
+    // Check if it's a valid card number using Luhn algorithm
+    if (!isValidLuhn(number)) {
+      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
+      creditCardInput.classList.add('error');
+      return false;
+    }
+
+    // Valid card
+    creditCardError.textContent = '';
+    creditCardInput.classList.remove('error');
+    return true;
+  }
+
+  function isValidLuhn(number) {
+    let sum = 0;
+    let isEven = false;
+
+    // Loop through values starting from the rightmost
+    for (let i = number.length - 1; i >= 0; i--) {
+      let digit = parseInt(number[i]);
+
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+
+      sum += digit;
+      isEven = !isEven;
+    }
+
+    return (sum % 10) === 0;
+  }
+}
+
 // Initialize all components
 document.addEventListener('DOMContentLoaded', () => {
   initializeFileUploads();
+  initializeCreditCardValidation();
   // ... existing initialization code ...
 }); 

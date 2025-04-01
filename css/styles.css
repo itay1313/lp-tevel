@@ -353,6 +353,10 @@ body {
     border-color: var(--error);
 }
 
+#creditCard {
+    direction: ltr;
+}
+
 .error-message {
     font-family: var(--font-family);
     color: var(--error);
@@ -650,7 +654,7 @@ body {
     font-family: var(--font-family);
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    left: 1rem;
     background: none;
     border: none;
     font-size: 1.5rem;
@@ -843,7 +847,7 @@ textarea {
     font-family: var(--font-family);
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    left: 1rem;
     background: none;
     border: none;
     font-size: 1.5rem;
@@ -977,7 +981,6 @@ textarea {
     cursor: pointer;
     width: 100%;
     height: 100%;
-    padding: 2.5rem;
     transition: all 0.3s ease;
     background: linear-gradient(to bottom, transparent, var(--gray-50));
 }
@@ -1120,4 +1123,70 @@ textarea {
     .upload-title {
         font-size: 1rem;
     }
+}
+
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.5s ease;
+}
+
+.success-icon {
+    margin-bottom: 1.5rem;
+}
+
+.success-message h2 {
+    font-size: 2rem;
+    color: var(--gray-900);
+    margin-bottom: 1rem;
+}
+
+.success-message p {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    margin-bottom: 0.5rem;
+}
+
+.success-details {
+    font-size: 1rem;
+    color: var(--gray-500);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Validation Fixes */
+input[required]:invalid {
+    border-color: var(--error);
+}
+
+input[required]:focus:invalid {
+    border-color: var(--error);
+    box-shadow: 0 0 0 2px rgba(255, 52, 52, 0.1);
+}
+
+input[required]:valid {
+    border-color: var(--success);
+}
+
+input[required]:focus:valid {
+    border-color: var(--success);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+/* Fix for hidden required fields */
+input[type="hidden"][required] {
+    display: none;
 }
