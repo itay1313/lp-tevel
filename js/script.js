@@ -27,39 +27,39 @@ function validateStep(stepNumber) {
   const requiredInputs = step.querySelectorAll('input[required]');
   let isValid = true;
 
-  requiredInputs.forEach(input => {
-    // Skip hidden inputs
-    if (input.type === 'hidden') return;
+  requiredInputs.forEach(field => {
+    // Skip hidden fields
+    if (field.type === 'hidden') return;
 
-    // For checkboxes
-    if (input.type === 'checkbox') {
-      if (!input.checked) {
-        showError(input, 'נא לאשר את ההסכמה');
+    // For credit card field
+    if (field.name === 'credit_card') {
+      const cardNumber = field.value.replace(/\s/g, '');
+      if (cardNumber.length < 13) {
+        showError(field, 'נא להזין מספר כרטיס תקין');
         isValid = false;
       } else {
-        removeError(input);
+        removeError(field);
       }
       return;
     }
 
-    // For regular inputs
-    if (!input.value.trim()) {
-      showError(input, 'שדה חובה');
+    // For checkboxes
+    if (field.type === 'checkbox') {
+      if (!field.checked) {
+        showError(field, 'נא לאשר את ההסכמה');
+        isValid = false;
+      } else {
+        removeError(field);
+      }
+      return;
+    }
+
+    // For other fields
+    if (!field.value.trim()) {
+      showError(field, 'שדה חובה');
       isValid = false;
     } else {
-      removeError(input);
-
-      // Validate email format
-      if (input.type === 'email' && !/\S+@\S+\.\S+/.test(input.value)) {
-        showError(input, 'כתובת אימייל לא תקינה');
-        isValid = false;
-      }
-
-      // Validate phone number format
-      if (input.name === 'PhoneNumber1_countrycode' && !/^\d{3}-?\d{7}$/.test(input.value)) {
-        showError(input, 'מספר טלפון לא תקין');
-        isValid = false;
-      }
+      removeError(field);
     }
   });
 
@@ -123,13 +123,48 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   const currentStep = document.querySelector('.form-step.active');
   if (!currentStep) return;
 
-  // Check if we're on step 2 (where creditConsent is)
-  if (currentStep.id === 'step2') {
-    const creditConsent = document.getElementById('creditConsent');
-    if (creditConsent && !creditConsent.checked) {
-      showError(creditConsent, 'נא לאשר את ההסכמה');
+  // Only validate fields in the current step
+  const currentStepFields = currentStep.querySelectorAll('input[required]');
+  let isValid = true;
+
+  currentStepFields.forEach(field => {
+    // Skip hidden fields
+    if (field.type === 'hidden') return;
+
+    // For credit card field
+    if (field.name === 'credit_card') {
+      const cardNumber = field.value.replace(/\s/g, '');
+      if (cardNumber.length < 13) {
+        showError(field, 'נא להזין מספר כרטיס תקין');
+        isValid = false;
+      } else {
+        removeError(field);
+      }
       return;
     }
+
+    // For checkboxes
+    if (field.type === 'checkbox') {
+      if (!field.checked) {
+        showError(field, 'נא לאשר את ההסכמה');
+        isValid = false;
+      } else {
+        removeError(field);
+      }
+      return;
+    }
+
+    // For other fields
+    if (!field.value.trim()) {
+      showError(field, 'שדה חובה');
+      isValid = false;
+    } else {
+      removeError(field);
+    }
+  });
+
+  if (!isValid) {
+    return;
   }
 
   const formData = new FormData(this);
