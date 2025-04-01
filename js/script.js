@@ -101,51 +101,19 @@ function prevStep(currentStep) {
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  // Get the current active step
-  const currentStep = document.querySelector('.form-step.active');
-  if (!currentStep) return;
+  // Get all form data
+  const formData = new FormData(this);
 
-  // Validate only required fields in the current step
-  const requiredFields = currentStep.querySelectorAll('[required]');
-  let isValid = true;
+  // Remove validation for credit consent and credit card
+  const creditConsent = document.getElementById('creditConsent');
+  if (creditConsent) {
+    creditConsent.removeAttribute('required');
+  }
 
-  requiredFields.forEach(field => {
-    // Skip validation for hidden fields
-    if (field.type === 'hidden') return;
-
-    // For credit card, check if it's a valid number
-    if (field.name === 'credit_card') {
-      const cardNumber = field.value.replace(/\s/g, '');
-      if (cardNumber.length < 13 || cardNumber.length > 19) {
-        showError(field, 'נא להזין מספר כרטיס תקין');
-        isValid = false;
-      } else if (!isValidLuhn(cardNumber)) {
-        showError(field, 'נא להזין מספר כרטיס תקין');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
-    }
-    // For checkboxes, check if they're checked
-    else if (field.type === 'checkbox') {
-      if (!field.checked) {
-        showError(field, 'נא לאשר את ההסכמה');
-        isValid = false;
-      } else {
-        removeError(field);
-      }
-    }
-    // For other required fields
-    else if (!field.value.trim()) {
-      showError(field, 'שדה חובה');
-      isValid = false;
-    } else {
-      removeError(field);
-    }
-  });
-
-  if (!isValid) {
-    return;
+  const creditCard = document.getElementById('creditCard');
+  if (creditCard) {
+    creditCard.removeAttribute('required');
+    creditCard.removeAttribute('pattern');
   }
 
   const submitBtn = document.querySelector('.submit-btn');
@@ -154,7 +122,6 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   submitBtn.disabled = true;
 
   try {
-    const formData = new FormData(this);
     const response = await fetch(this.action, {
       method: 'POST',
       body: formData
@@ -207,6 +174,15 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
+
+    // Restore the required attributes after submission attempt
+    if (creditConsent) {
+      creditConsent.setAttribute('required', '');
+    }
+    if (creditCard) {
+      creditCard.setAttribute('required', '');
+      creditCard.setAttribute('pattern', '[0-9\\s]{13,19}');
+    }
   }
 });
 
@@ -535,12 +511,10 @@ function initializeFileUploads() {
   });
 }
 
-// Credit Card Validation
+// Credit Card Validation - Simplified
 function initializeCreditCardValidation() {
   const creditCardInput = document.getElementById('creditCard');
-  const creditCardError = document.getElementById('creditCardError');
-
-  if (!creditCardInput || !creditCardError) return;
+  if (!creditCardInput) return;
 
   creditCardInput.addEventListener('input', function (e) {
     // Remove any non-digit characters
@@ -551,15 +525,6 @@ function initializeCreditCardValidation() {
 
     // Update the input value
     e.target.value = value;
-
-    // Simple validation - just check if we have at least 13 digits
-    if (value.replace(/\s/g, '').length >= 13) {
-      creditCardError.textContent = '';
-      creditCardInput.classList.remove('error');
-    } else {
-      creditCardError.textContent = 'נא להזין מספר כרטיס תקין';
-      creditCardInput.classList.add('error');
-    }
   });
 }
 
