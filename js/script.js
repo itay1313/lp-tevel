@@ -325,12 +325,19 @@ function handleFileUpload(input, previewId) {
 
       const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
+      // Add hidden input for file name
+      const fileNameInput = document.createElement('input');
+      fileNameInput.type = 'hidden';
+      fileNameInput.name = `${input.name}_fileName`;
+      fileNameInput.value = file.name;
+      input.parentElement.appendChild(fileNameInput);
+
       fileItem.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
         </svg>
         <span>${file.name} (${fileSize} MB)</span>
-        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
+        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}', '${file.name}')">×</span>
       `;
 
       previewDiv.appendChild(fileItem);
@@ -340,9 +347,15 @@ function handleFileUpload(input, previewId) {
   }
 }
 
-function removeFile(element, inputId, previewId) {
+function removeFile(element, inputId, previewId, fileName) {
   const input = document.getElementById(inputId);
   const previewDiv = document.getElementById(previewId);
+
+  // Remove the hidden filename input
+  const fileNameInput = input.parentElement.querySelector(`input[name="${input.name}_fileName"][value="${fileName}"]`);
+  if (fileNameInput) {
+    fileNameInput.remove();
+  }
 
   // Remove the file item from preview with animation
   const fileItem = element.parentElement;
