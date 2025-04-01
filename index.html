@@ -160,24 +160,6 @@
                             <div id="step2" class="form-step">
                                 <div class="form-grid">
                                     <div class="form-group full-width">
-                                        <div class="consent-box">
-                                            <h3>אישור גישה לדו"ח נתוני אשראי</h3>
-                                            <div class="consent-text">
-                                                לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
-                                            </div>
-                                            <div class="consent-checkbox">
-                                                <input
-                                                    type="checkbox"
-                                                    id="creditConsent"
-                                                    name="creditConsent"
-                                                    required
-                                                    autocomplete="off"
-                                                >
-                                                <label class="terms-label" for="creditConsent">הריני מאשר לחברת תבל</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group full-width">
                                         <label>פרטי חשבון בנק *</label>
                                         <div class="bank-inputs">
                                             <div class="custom-select-container">
@@ -313,103 +295,120 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-group full-width">
+                                            <div class="consent-box">
+                                                <h3>אישור גישה לדו"ח נתוני אשראי</h3>
+                                                <div class="consent-text">
+                                                    לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
+                                                </div>
+                                                <div class="consent-checkbox">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="creditConsent"
+                                                        name="creditConsent"
+                                                        required
+                                                        autocomplete="off"
+                                                    >
+                                                    <label class="terms-label" for="creditConsent">הריני מאשר לחברת תבל</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button type="button" class="back-btn" onclick="prevStep(2)">חזור</button>
+                                        <button type="button" class="next-btn" onclick="nextStep(2)">המשך</button>
                                     </div>
                                 </div>
-                                <div class="form-footer">
-                                    <button type="button" class="back-btn" onclick="prevStep(2)">חזור</button>
-                                    <button type="button" class="next-btn" onclick="nextStep(2)">המשך</button>
-                                </div>
-                            </div>
-                            <!-- Step 3: Identification Details -->
-                            <div class="form-step" id="step3">
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label>
-                                            מה שם המשפחה של אימך לפני הנישואים?
-                                            <span class="required">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="SingleLine"
-                                            placeholder="שם משפחה"
-                                            required
-                                        >
+                                <!-- Step 3: Identification Details -->
+                                <div class="form-step" id="step3">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>
+                                                מה שם המשפחה של אימך לפני הנישואים?
+                                                <span class="required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="SingleLine"
+                                                placeholder="שם משפחה"
+                                                required
+                                            >
+                                        </div>
+                                        <div class="form-group">
+                                            <label>
+                                                מה שמה של סבתך מצד האם?
+                                                <span class="required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="SingleLine2"
+                                                placeholder="שם סבתא"
+                                                required
+                                            >
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label class="checkbox terms-label">
+                                                <input type="checkbox" name="DecisionBox" required>
+                                                <span onclick="showPopup()">הריני מאשר לחברת תבל</span>
+                                                <span class="required">*</span>
+                                            </label>
+                                            <p class="terms" style="cursor: pointer;">
+                                                אני, הח"מ, מאשר בזאת לחברת תבל יבואני רכב בע"מ, ח.פ: 516997665, לגשת למידע האישי שלי דרך לשכת נתוני האשראי בישראל. אני מודע לכך שהמידע ייעשה בו שימוש לצורך בדיקת חיווי אשראי ראשונית למתן הלוואת מימון לרכב ואישורי את הסכמתי לכך.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>
-                                            מה שמה של סבתך מצד האם?
-                                            <span class="required">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="SingleLine2"
-                                            placeholder="שם סבתא"
-                                            required
-                                        >
-                                    </div>
-                                    <div class="form-group full-width">
-                                        <label class="checkbox terms-label">
-                                            <input type="checkbox" name="DecisionBox" required>
-                                            <span onclick="showPopup()">הריני מאשר לחברת תבל</span>
-                                            <span class="required">*</span>
-                                        </label>
-                                        <p class="terms" style="cursor: pointer;">
-                                            אני, הח"מ, מאשר בזאת לחברת תבל יבואני רכב בע"מ, ח.פ: 516997665, לגשת למידע האישי שלי דרך לשכת נתוני האשראי בישראל. אני מודע לכך שהמידע ייעשה בו שימוש לצורך בדיקת חיווי אשראי ראשונית למתן הלוואת מימון לרכב ואישורי את הסכמתי לכך.
-                                        </p>
+                                    <div class="form-footer">
+                                        <button type="button" class="back-btn" onclick="prevStep(3)">חזרה</button>
+                                        <button type="submit" class="submit-btn">שלח טופס</button>
                                     </div>
                                 </div>
-                                <div class="form-footer">
-                                    <button type="button" class="back-btn" onclick="prevStep(3)">חזרה</button>
-                                    <button type="submit" class="submit-btn">שלח טופס</button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="popup-overlay" id="consentPopup">
-            <div class="popup-content">
-                <button class="popup-close" onclick="closePopup()">&times;</button>
-                <h2>הסכמה לקבלת דו"ח אשראי</h2>
-                <div class="consent-text">
-                    לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
-                    <br>
-                    <br>
-                    אני מסכים כי דו"ח אשראי לגבי מלשכת נתוני האשראי אשר כולל נתוני אשראי ממאגר נתוני האשראי שבבנק ישראל, יימסר לחברת תבל יבואני רכב בע"מ/מספר ח.פ: 516997665 לשם בחינת בקשתי להתקשר בעסקת/עסקאות אשראי כמפורט להלן:
-                    <br>
-                    <br>
-                    סוג העסקה: הלוואה
-                    <br>
-                    מטרת ההלוואה: רכישת רכב
-                    <br>
-                    בעסקה זו הלקוח חייב (לווה).
-                    <br>
-                    <br>
-                    אם העסקה לא תצא לפועל,
-                    <br>
-                    תום תוקף הסכמה יהיה למשך 60 ימים (תאריך פקיעת התוקף)
-                    <br>
-                    <br>
-                    ככל שהעסקה תצא לפועל,
-                    <br>
-                    הסכמתי זו תהיה בתוקף עד, המוקדם מבין, תום אותה עסקה או עד (תום העסקה).
-                    <br>
-                    <br>
-                    הסכמתי זו תאפשר ללשכת נתוני האשראי למסור לתבל יבואני רכב בע"מ, מספר ח.פ: 516997665 במהלך כל תקופה זו נתוני אשראי, או דו"ח אשראי לשם ניטור יכולתי להמשיך ולעמוד בתנאי העסקה.
-                    <br>
-                    <br>
-                    ידוע לי כי נתוני האשראי שבמאגר נתוני האשראי שבבנק ישראל, כוללים ידע בדבר עסקאות אשראי, וכן מידע בדבר הליכי חדלות פירעון ושיקום כלכלי, הליכי הוצאה לפועל והגבלות חשבון על פי חוק שיקים ללא כיסוי.
-                    <br>
-                    <br>
-                    הובא בזאת לתשומת ליבי כי הסכמתי כאמור, מאפשרת למשתמש בנתוני אשראי לקבל דירוג אשראי לגבי מלשכת אשראי, לתקופה שהוסכמה לעיל, והכל בכפוף לחוק.
-                    <br>
-                    <br>
-                    כמו כן ידוע לי שמסירת המידע תלויה בהסכמתי ואין אני חייב לתת הסכמה זו: תאריך מתן ההסכמה יום/חודש/שנה
+            <div class="popup-overlay" id="consentPopup">
+                <div class="popup-content">
+                    <button class="popup-close" onclick="closePopup()">&times;</button>
+                    <h2>הסכמה לקבלת דו"ח אשראי</h2>
+                    <div class="consent-text">
+                        לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
+                        <br>
+                        <br>
+                        אני מסכים כי דו"ח אשראי לגבי מלשכת נתוני האשראי אשר כולל נתוני אשראי ממאגר נתוני האשראי שבבנק ישראל, יימסר לחברת תבל יבואני רכב בע"מ/מספר ח.פ: 516997665 לשם בחינת בקשתי להתקשר בעסקת/עסקאות אשראי כמפורט להלן:
+                        <br>
+                        <br>
+                        סוג העסקה: הלוואה
+                        <br>
+                        מטרת ההלוואה: רכישת רכב
+                        <br>
+                        בעסקה זו הלקוח חייב (לווה).
+                        <br>
+                        <br>
+                        אם העסקה לא תצא לפועל,
+                        <br>
+                        תום תוקף הסכמה יהיה למשך 60 ימים (תאריך פקיעת התוקף)
+                        <br>
+                        <br>
+                        ככל שהעסקה תצא לפועל,
+                        <br>
+                        הסכמתי זו תהיה בתוקף עד, המוקדם מבין, תום אותה עסקה או עד (תום העסקה).
+                        <br>
+                        <br>
+                        הסכמתי זו תאפשר ללשכת נתוני האשראי למסור לתבל יבואני רכב בע"מ, מספר ח.פ: 516997665 במהלך כל תקופה זו נתוני אשראי, או דו"ח אשראי לשם ניטור יכולתי להמשיך ולעמוד בתנאי העסקה.
+                        <br>
+                        <br>
+                        ידוע לי כי נתוני האשראי שבמאגר נתוני האשראי שבבנק ישראל, כוללים ידע בדבר עסקאות אשראי, וכן מידע בדבר הליכי חדלות פירעון ושיקום כלכלי, הליכי הוצאה לפועל והגבלות חשבון על פי חוק שיקים ללא כיסוי.
+                        <br>
+                        <br>
+                        הובא בזאת לתשומת ליבי כי הסכמתי כאמור, מאפשרת למשתמש בנתוני אשראי לקבל דירוג אשראי לגבי מלשכת אשראי, לתקופה שהוסכמה לעיל, והכל בכפוף לחוק.
+                        <br>
+                        <br>
+                        כמו כן ידוע לי שמסירת המידע תלויה בהסכמתי ואין אני חייב לתת הסכמה זו: תאריך מתן ההסכמה יום/חודש/שנה
+                    </div>
                 </div>
             </div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-        <script src="./js/script.js"></script>
-    </body>
-</html>
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+            <script src="./js/script.js"></script>
+        </body>
+    </html>

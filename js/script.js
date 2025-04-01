@@ -331,19 +331,16 @@ function validateFileUpload(input, maxSizeMB) {
 
 function handleFileUpload(input, previewId) {
   const previewDiv = document.getElementById(previewId);
+  const uploadArea = input.closest('.upload-area');
 
   if (input.files && input.files.length > 0) {
-    previewDiv.classList.add('has-files');
+    // Clear existing previews first
+    previewDiv.innerHTML = '';
 
-    // Get existing files count
-    const existingFiles = previewDiv.children.length;
-
-    // Add new files
     Array.from(input.files).forEach(file => {
+      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
       const fileItem = document.createElement('div');
       fileItem.className = 'file-item';
-
-      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
       // Add hidden input for file name
       const fileNameInput = document.createElement('input');
@@ -362,20 +359,29 @@ function handleFileUpload(input, previewId) {
 
       previewDiv.appendChild(fileItem);
     });
+
+    previewDiv.classList.add('has-files');
+    uploadArea.classList.add('has-files');
   } else {
+    previewDiv.innerHTML = '';
     previewDiv.classList.remove('has-files');
+    uploadArea.classList.remove('has-files');
   }
 }
 
 function removeFile(element, inputId, previewId, fileName) {
   const input = document.getElementById(inputId);
   const previewDiv = document.getElementById(previewId);
+  const uploadArea = input.closest('.upload-area');
 
   // Remove the hidden filename input
   const fileNameInput = input.parentElement.querySelector(`input[name="${input.name}_fileName"][value="${fileName}"]`);
   if (fileNameInput) {
     fileNameInput.remove();
   }
+
+  // Clear the file input
+  input.value = '';
 
   // Remove the file item from preview with animation
   const fileItem = element.parentElement;
@@ -387,6 +393,7 @@ function removeFile(element, inputId, previewId, fileName) {
     // If no more files, hide preview
     if (previewDiv.children.length === 0) {
       previewDiv.classList.remove('has-files');
+      uploadArea.classList.remove('has-files');
     }
   }, 300);
 }
@@ -574,7 +581,19 @@ function initializeCreditCardValidation() {
 
 // Initialize all components
 document.addEventListener('DOMContentLoaded', () => {
-  initializeFileUploads();
+  // Initialize skip upload checkboxes
+  const uploadBoxes = document.querySelectorAll('.upload-box');
+  uploadBoxes.forEach(box => {
+    const skipCheckbox = box.querySelector('.skip-upload');
+    const uploadArea = box.querySelector('.upload-area');
+
+    if (skipCheckbox) {
+      skipCheckbox.addEventListener('change', (e) => {
+        uploadArea.classList.toggle('disabled', e.target.checked);
+      });
+    }
+  });
+
   initializeCreditCardValidation();
-  // ... existing initialization code ...
+  // ... any other initialization code ...
 }); 
