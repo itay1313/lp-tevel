@@ -7,6 +7,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
         <link rel="stylesheet" href="./css/styles.css">
     </head>
     <body>
@@ -132,31 +134,19 @@
                                         </label>
                                         <input type="text" name="monthly_income" placeholder="הכנסה חודשית">
                                     </div>
-                                    <div class="form-group date-group">
+                                    <div class="form-group">
                                         <label>
                                             תאריך לידה
                                             <span class="required">*</span>
                                         </label>
-                                        <div class="date-inputs">
-                                            <input
-                                                type="text"
-                                                name="birth_day"
-                                                maxlength="2"
-                                                placeholder="יום"
-                                            >
-                                            <input
-                                                type="text"
-                                                name="birth_month"
-                                                maxlength="2"
-                                                placeholder="חודש"
-                                            >
-                                            <input
-                                                type="text"
-                                                name="birth_year"
-                                                maxlength="4"
-                                                placeholder="שנה"
-                                            >
-                                        </div>
+                                        <input
+                                            type="text"
+                                            name="birth_date"
+                                            id="birthDate"
+                                            placeholder="בחר תאריך"
+                                            required
+                                            readonly
+                                        >
                                     </div>
                                 </div>
                                 <div class="form-footer">
@@ -425,40 +415,31 @@
                 </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/he.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
         <script src="./js/script.js"></script>
         <script>
-            // Function to set initial values and handle changes
-            function updateHiddenFields() {
-                const fullNameInput = document.querySelector('input[name="full_name"]');
-                const phoneInput = document.querySelector('input[name="phone"]');
-                const lastNameHidden = document.getElementById('last_name_hidden');
-                const mobileHidden = document.getElementById('mobile_hidden');
+            // Initialize Flatpickr date picker
+            flatpickr("#birthDate", {
+                locale: "he",
+                dateFormat: "d/m/Y",
+                disableMobile: true
+            });
 
-                // Set initial values if they exist
-                if (fullNameInput && fullNameInput.value) {
-                    lastNameHidden.value = fullNameInput.value;
-                }
-                if (phoneInput && phoneInput.value) {
-                    mobileHidden.value = phoneInput.value;
-                }
-
-                // Add event listeners for changes
-                fullNameInput.addEventListener('input', function(e) {
-                    lastNameHidden.value = e.target.value;
-                });
-                
-                phoneInput.addEventListener('input', function(e) {
-                    mobileHidden.value = e.target.value;
-                });
+            // Function to format birth date for form submission
+            function formatBirthDate(dateStr) {
+                if (!dateStr) return '';
+                const [day, month, year] = dateStr.split('/');
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             }
 
-            // Call the function when the document is ready
-            document.addEventListener('DOMContentLoaded', updateHiddenFields);
-
-            // Handle form submission
+            // Update form submission to use new date format
             document.getElementById('tevelForm').addEventListener('submit', async function(e) {
-                e.preventDefault(); // Prevent default form submission
+                e.preventDefault();
+                
+                const birthDate = document.getElementById('birthDate').value;
+                const formattedBirthDate = formatBirthDate(birthDate);
                 
                 // Get the form values
                 const fullName = document.querySelector('input[name="full_name"]').value;
@@ -480,15 +461,16 @@
                     
                     // Submit form data using fetch
                     const formData = new FormData(this);
+                    formData.set('birth_date', formattedBirthDate); // Update birth date format
+                    
                     await fetch(this.action, {
                         method: 'POST',
                         body: formData,
-                        mode: 'no-cors' // Add this to prevent CORS issues
+                        mode: 'no-cors'
                     });
                     
                 } catch (error) {
                     console.error('Error:', error);
-                    // Form was already replaced with thank you message, so no need to show error
                 }
             });
 
@@ -731,6 +713,144 @@
                 background: #e9ecef;
                 border-color: #adb5bd;
                 color: #212529;
+            }
+
+            /* Date Picker Styles */
+            .flatpickr-calendar {
+                font-family: var(--font-family);
+                direction: rtl;
+                background: white;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                border-radius: 12px;
+                border: none;
+                padding: 15px;
+            }
+
+            .flatpickr-months {
+                margin-bottom: 10px;
+            }
+
+            .flatpickr-current-month {
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: var(--gray-900);
+            }
+
+            .flatpickr-monthDropdown-months {
+                font-family: var(--font-family);
+                font-weight: 500;
+            }
+
+            .flatpickr-weekday {
+                font-family: var(--font-family);
+                font-weight: 500;
+                color: var(--gray-600);
+            }
+
+            .flatpickr-day {
+                font-family: var(--font-family);
+                border-radius: 8px;
+                color: var(--gray-700);
+                transition: all 0.2s ease;
+            }
+
+            .flatpickr-day:hover {
+                background: var(--gray-100);
+                border-color: var(--gray-200);
+            }
+
+            .flatpickr-day.selected {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+            }
+
+            .flatpickr-day.selected:hover {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+                filter: brightness(1.1);
+            }
+
+            .flatpickr-day.today {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .flatpickr-months .flatpickr-prev-month, 
+            .flatpickr-months .flatpickr-next-month {
+                fill: var(--gray-600);
+                padding: 10px;
+                transition: all 0.2s ease;
+            }
+
+            .flatpickr-months .flatpickr-prev-month:hover, 
+            .flatpickr-months .flatpickr-next-month:hover {
+                fill: var(--primary);
+            }
+
+            .numInputWrapper {
+                position: relative;
+                height: 100%;
+            }
+
+            .numInputWrapper span {
+                position: absolute;
+                right: 0;
+                width: 14px;
+                padding: 0 4px 0 2px;
+                height: 50%;
+                line-height: 26px;
+                opacity: 0;
+                cursor: pointer;
+                border: 1px solid rgba(72,72,72,0.15);
+                box-sizing: border-box;
+            }
+
+            .numInputWrapper span:hover {
+                background: rgba(0,0,0,0.1);
+            }
+
+            .numInputWrapper span.arrowUp {
+                top: 0;
+                border-bottom: 0;
+            }
+
+            .numInputWrapper span.arrowDown {
+                top: 50%;
+            }
+
+            .numInputWrapper span:after {
+                content: "";
+                position: absolute;
+                top: 33%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border: 4px solid transparent;
+            }
+
+            .numInputWrapper span.arrowUp:after {
+                border-bottom-color: rgba(72,72,72,0.6);
+                top: 40%;
+            }
+
+            .numInputWrapper span.arrowDown:after {
+                border-top-color: rgba(72,72,72,0.6);
+                top: 60%;
+            }
+
+            .numInputWrapper span:hover:after {
+                border-top-color: rgba(72,72,72,0.9);
+                border-bottom-color: rgba(72,72,72,0.9);
+            }
+
+            .flatpickr-input {
+                cursor: pointer;
+                background: var(--gray-100) !important;
+            }
+
+            .flatpickr-input:focus {
+                background: var(--white) !important;
             }
         </style>
     </body>
