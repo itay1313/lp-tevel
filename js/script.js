@@ -97,14 +97,6 @@ function prevStep(currentStep) {
   }
 }
 
-// Load environment variables
-const config = {
-  uploadThing: {
-    apiKey: process.env.UPLOADTHING_API_KEY || '',
-    appId: process.env.UPLOADTHING_APP_ID || ''
-  }
-};
-
 // Form submission handling
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -139,31 +131,6 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     Terms_Accepted: formData.get('DecisionBox') === 'on' ? 'Yes' : 'No'
   };
 
-  // Add files if they exist and are not skipped
-  if (!document.getElementById('skipId')?.checked) {
-    const idFiles = formData.getAll('id_document');
-    if (idFiles && idFiles.length > 0) {
-      for (let i = 0; i < idFiles.length; i++) {
-        const file = idFiles[i];
-        if (file instanceof File && file.size > 0) {
-          data.ID_Document = file;
-        }
-      }
-    }
-  }
-
-  if (!document.getElementById('skipLicense')?.checked) {
-    const licenseFiles = formData.getAll('drivers_license');
-    if (licenseFiles && licenseFiles.length > 0) {
-      for (let i = 0; i < licenseFiles.length; i++) {
-        const file = licenseFiles[i];
-        if (file instanceof File && file.size > 0) {
-          data.Drivers_License = file;
-        }
-      }
-    }
-  }
-
   const submitBtn = document.querySelector('.submit-btn');
   const originalText = submitBtn.innerHTML;
   submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
@@ -175,9 +142,7 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
 
     // Add all non-file data to the FormData
     Object.entries(data).forEach(([key, value]) => {
-      if (!(value instanceof File)) {
-        submitFormData.append(key, value);
-      }
+      submitFormData.append(key, value);
     });
 
     // Upload files to UploadThing first
@@ -187,80 +152,85 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     };
 
     // Handle ID Document files
-    const idFiles = formData.getAll('id_document');
-    if (idFiles && idFiles.length > 0) {
-      for (let i = 0; i < idFiles.length; i++) {
-        const file = idFiles[i];
-        if (file instanceof File && file.size > 0) {
-          try {
-            const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
-            uploadFormData.append('fileKey', `id_document_${i}`);
+    if (!document.getElementById('skipId')?.checked) {
+      const idFiles = formData.getAll('id_document');
+      if (idFiles && idFiles.length > 0) {
+        for (let i = 0; i < idFiles.length; i++) {
+          const file = idFiles[i];
+          if (file instanceof File && file.size > 0) {
+            try {
+              const uploadFormData = new FormData();
+              uploadFormData.append('file', file);
 
-            const response = await fetch('https://uploadthing.com/upload', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${config.uploadThing.apiKey}`,
-                'X-Uploadthing-App-Id': config.uploadThing.appId
-              },
-              body: uploadFormData
-            });
+              // Upload to UploadThing
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadFormData
+              });
 
-            const uploadData = await response.json();
-            if (uploadData.url) {
-              uploadedUrls.idDocuments.push(uploadData.url);
-              submitFormData.append(`ID_Document_URL_${i}`, uploadData.url);
+              if (!response.ok) {
+                throw new Error('Upload failed');
+              }
+
+              const uploadData = await response.json();
+              if (uploadData.url) {
+                uploadedUrls.idDocuments.push(uploadData.url);
+                submitFormData.append(`ID_Document_URL_${i}`, uploadData.url);
+                console.log('Successfully uploaded ID document:', uploadData.url);
+              }
+            } catch (error) {
+              console.error('Error uploading ID document:', error);
+              showMessage('שגיאה בהעלאת תעודת זהות. אנא נסה שוב.', 'error');
+              submitBtn.innerHTML = originalText;
+              submitBtn.disabled = false;
+              return;
             }
-          } catch (error) {
-            console.error('Error uploading ID document:', error);
-            showMessage('שגיאה בהעלאת תעודת זהות. אנא נסה שוב.', 'error');
           }
         }
+        submitFormData.append('ID_Document_URLs', JSON.stringify(uploadedUrls.idDocuments));
+        submitFormData.append('ID_Document_count', uploadedUrls.idDocuments.length.toString());
       }
-      submitFormData.append('ID_Document_URLs', JSON.stringify(uploadedUrls.idDocuments));
-      submitFormData.append('ID_Document_count', uploadedUrls.idDocuments.length.toString());
     }
 
     // Handle Driver's License files
-    const licenseFiles = formData.getAll('drivers_license');
-    if (licenseFiles && licenseFiles.length > 0) {
-      for (let i = 0; i < licenseFiles.length; i++) {
-        const file = licenseFiles[i];
-        if (file instanceof File && file.size > 0) {
-          try {
-            const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
-            uploadFormData.append('fileKey', `drivers_license_${i}`);
+    if (!document.getElementById('skipLicense')?.checked) {
+      const licenseFiles = formData.getAll('drivers_license');
+      if (licenseFiles && licenseFiles.length > 0) {
+        for (let i = 0; i < licenseFiles.length; i++) {
+          const file = licenseFiles[i];
+          if (file instanceof File && file.size > 0) {
+            try {
+              const uploadFormData = new FormData();
+              uploadFormData.append('file', file);
 
-            const response = await fetch('https://uploadthing.com/upload', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${config.uploadThing.apiKey}`,
-                'X-Uploadthing-App-Id': config.uploadThing.appId
-              },
-              body: uploadFormData
-            });
+              // Upload to UploadThing
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadFormData
+              });
 
-            const uploadData = await response.json();
-            if (uploadData.url) {
-              uploadedUrls.licenseDocuments.push(uploadData.url);
-              submitFormData.append(`Drivers_License_URL_${i}`, uploadData.url);
+              if (!response.ok) {
+                throw new Error('Upload failed');
+              }
+
+              const uploadData = await response.json();
+              if (uploadData.url) {
+                uploadedUrls.licenseDocuments.push(uploadData.url);
+                submitFormData.append(`Drivers_License_URL_${i}`, uploadData.url);
+                console.log('Successfully uploaded license document:', uploadData.url);
+              }
+            } catch (error) {
+              console.error('Error uploading license document:', error);
+              showMessage('שגיאה בהעלאת רישיון נהיגה. אנא נסה שוב.', 'error');
+              submitBtn.innerHTML = originalText;
+              submitBtn.disabled = false;
+              return;
             }
-          } catch (error) {
-            console.error('Error uploading license document:', error);
-            showMessage('שגיאה בהעלאת רישיון נהיגה. אנא נסה שוב.', 'error');
           }
         }
+        submitFormData.append('Drivers_License_URLs', JSON.stringify(uploadedUrls.licenseDocuments));
+        submitFormData.append('Drivers_License_count', uploadedUrls.licenseDocuments.length.toString());
       }
-      submitFormData.append('Drivers_License_URLs', JSON.stringify(uploadedUrls.licenseDocuments));
-      submitFormData.append('Drivers_License_count', uploadedUrls.licenseDocuments.length.toString());
-    }
-
-    // Only proceed with form submission if all files were uploaded successfully
-    if ((idFiles.length > 0 && uploadedUrls.idDocuments.length === 0) ||
-      (licenseFiles.length > 0 && uploadedUrls.licenseDocuments.length === 0)) {
-      showMessage('שגיאה בהעלאת הקבצים. אנא נסה שוב.', 'error');
-      return;
     }
 
     // Add the required Zoho parameters
@@ -320,6 +290,7 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
     }
   } catch (error) {
     console.error('Form submission error:', error);
+    showMessage('שגיאה בשליחת הטופס. אנא נסה שוב.', 'error');
   } finally {
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
