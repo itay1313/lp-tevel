@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>tevel - מימון לרכב אונליין</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+        <link rel="stylesheet" href="./css/styles.css">
+    </head>
+    <body>
+        <header class="main-header">
+            <div class="container">
+                <div class="header-content">
+                    <img src="logo.png" alt="Tevel Logo" class="header-logo">
+                    <div class="header-contact">
+                        <div class="phone-number">
+                            <svg
+                                class="phone-icon"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M20.01 15.38C18.78 15.38 17.59 15.18 16.48 14.82C16.13 14.7 15.74 14.79 15.47 15.06L13.9 17.03C11.07 15.68 8.42 13.13 7.01 10.2L8.96 8.54C9.23 8.26 9.31 7.87 9.2 7.52C8.83 6.41 8.64 5.22 8.64 3.99C8.64 3.45 8.19 3 7.65 3H4.19C3.65 3 3 3.24 3 3.99C3 13.28 10.73 21 20.01 21C20.72 21 21 20.37 21 19.82V16.37C21 15.83 20.55 15.38 20.01 15.38Z" fill="#FF3434"/>
+                            </svg>
+                            <span>מרכז הזמנות:</span>
+                            <span class="number">*2670</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="page-wrapper">
+            <div class="background-image">
+                <div class="container">
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <div class="hero-messages">
+                                <p class="hero-message">
+                                    לקוח יקר,
+                                    <br>
+                                    תודה רבה על זמנך היקר,
+                                    
+                                    בעוד דקות ספורות תקבל תשובה עקרונית לגבי זכאותך למימון
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-container">
+                        <div class="steps-progress">
+                            <div class="step active" data-step="1">
+                                <div class="step-number">1</div>
+                                <div class="step-text">פרטים אישיים</div>
+                            </div>
+                            <div class="step" data-step="2">
+                                <div class="step-number">2</div>
+                                <div class="step-text">מידע חשוב</div>
+                            </div>
+                            <div class="step" data-step="3">
+                                <div class="step-number">3</div>
+                                <div class="step-text">פרטי הזדהות</div>
+                            </div>
+                        </div>
+                        <div class="form-message">
+                            לאחר שליחת המסמכים תוך דקות אחד הנציגים שלנו יחזור אליך להליך אישור מזורז.
+                        </div>
+                        <form
+                            id="tevelForm"
+                            action="https://hook.eu2.make.com/n65vxpeadq7w1jes0ib0y36lf2s13xhp"
+                            method="POST"
+                            accept-charset="UTF-8"
+                            enctype="multipart/form-data"
+                        >
+                            <!-- Hidden fields required for Zoho CRM -->
+                            <input type="hidden" name="xnQsjsdp" value="xnQsjsdp">
+                            <input type="hidden" name="zc_gad" value="zc_gad">
+                            <input type="hidden" name="xmIwtLD" value="xmIwtLD">
+                            <input type="hidden" name="actionType" value="actionType">
+                            <input type="hidden" name="returnURL" value="returnURL">
+                            <input
+                                type="hidden"
+                                name="Last_Name"
+                                id="last_name_hidden"
+                                value=""
+                            >
+                            <input
+                                type="hidden"
+                                name="Mobile"
+                                id="mobile_hidden"
+                                value=""
+                            >
+                            <!-- Step 1: Personal Details -->
+                            <div class="form-step active" id="step1">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>
+                                            שם הלקוח (שם מלא)
+                                            <span class="note">(כמו שמופיע בת.ז)</span>
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="full_name"
+                                            placeholder="שם מלא"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            כתובת מייל
+                                        </label>
+                                        <input type="email" name="email" placeholder="your@email.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            טלפון נייד
+                                        </label>
+                                        <input type="tel" name="phone" placeholder="050-0000000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            מקום העבודה/שם העסק
+                                        </label>
+                                        <input type="text" name="workplace" placeholder="שם העסק">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            הכנסה חודשית נטו (משק בית)
+                                        </label>
+                                        <input type="text" name="monthly_income" placeholder="הכנסה חודשית">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            תאריך לידה
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="birth_date"
+                                            id="birthDate"
+                                            placeholder="בחר תאריך"
+                                            required
+                                            readonly
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-footer">
+                                    <button type="button" class="next-btn" onclick="nextStep(1)">
+                                        <span>בואו נתקדם</span>
+                                        <svg width="24" height="24" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Step 2: Additional Information -->
+                            <div id="step2" class="form-step">
+                                <div class="form-grid">
+                                    <div class="form-group full-width">
+                                        <div class="consent-box">
+                                            <h3>אישור גישה לדו"ח נתוני אשראי</h3>
+                                            <div class="consent-text">
+                                                לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
+                                            </div>
+                                            <div class="consent-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    id="creditConsent"
+                                                    name="creditConsent"
+                                                    required
+                                                    autocomplete="off"
+                                                >
+                                                <label class="terms-label" for="creditConsent">הריני מאשר לחברת תבל</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>פרטי חשבון בנק *</label>
+                                        <div class="bank-inputs">
+                                            <div class="custom-select-container">
+                                                <input
+                                                    type="text"
+                                                    id="bankSearch"
+                                                    class="bank-search"
+                                                    placeholder="חפש או בחר בנק..."
+                                                    autocomplete="off"
+                                                    required
+                                                >
+                                                <div class="bank-dropdown" id="bankDropdown">
+                                                    <div class="bank-option" data-value="12" data-name="בנק הפועלים">בנק הפועלים - 12</div>
+                                                    <div class="bank-option" data-value="10" data-name="בנק לאומי">בנק לאומי - 10</div>
+                                                    <div class="bank-option" data-value="11" data-name="בנק דיסקונט">בנק דיסקונט - 11</div>
+                                                    <div class="bank-option" data-value="20" data-name="בנק מזרחי טפחות">בנק מזרחי טפחות - 20</div>
+                                                    <div class="bank-option" data-value="31" data-name="הבנק הבינלאומי">הבנק הבינלאומי - 31</div>
+                                                    <div class="bank-option" data-value="17" data-name="בנק מרכנתיל">בנק מרכנתיל - 17</div>
+                                                    <div class="bank-option" data-value="13" data-name="בנק איגוד">בנק איגוד - 13</div>
+                                                    <div class="bank-option" data-value="14" data-name="בנק אוצר החייל">בנק אוצר החייל - 14</div>
+                                                    <div class="bank-option" data-value="52" data-name="בנק פאגי">בנק פאגי - 52</div>
+                                                    <div class="bank-option" data-value="54" data-name="בנק ירושלים">בנק ירושלים - 54</div>
+                                                </div>
+                                                <input
+                                                    type="hidden"
+                                                    id="selectedBankValue"
+                                                    name="bank_code"
+                                                    required
+                                                >
+                                            </div>
+                                            <input
+                                                type="text"
+                                                name="account_number"
+                                                placeholder="מספר חשבון"
+                                                required
+                                            >
+                                            <input
+                                                type="text"
+                                                name="branch_number"
+                                                placeholder="מספר סניף"
+                                                required
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>פרטי כרטיס אשראי *</label>
+                                        <input
+                                            type="text"
+                                            name="credit_card"
+                                            id="creditCard"
+                                            placeholder="מספר כרטיס אשראי"
+                                            required
+                                            pattern="[0-9\s]{13,19}"
+                                            maxlength="19"
+                                            autocomplete="cc-number"
+                                        >
+                                        <div class="error-message" id="creditCardError"></div>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>תוקף *</label>
+                                        <div class="date-inputs">
+                                            <input type="text" placeholder="חודש" required>
+                                            <input type="text" placeholder="שנה" required>
+                                        </div>
+                                    </div>
+                                    <!-- Document Upload Section -->
+                                    <div class="form-group full-width">
+                                        <div class="upload-container">
+                                            <div class="upload-header">
+                                                <h3>העלאת מסמכים</h3>
+                                                <p>נא להעלות את המסמכים הבאים לצורך בדיקת הבקשה</p>
+                                            </div>
+                                            <div class="upload-box">
+                                                <div class="upload-box-header">
+                                                    <label>תעודת זהות</label>
+                                                    <div class="upload-skip-option">
+                                                        <input type="checkbox" id="skipId" class="skip-upload">
+                                                        <label for="skipId">אשלים בהמשך</label>
+                                                    </div>
+                                                </div>
+                                                <p class="upload-subtitle">צד קדמי ואחורי + ספח בתוקף</p>
+                                                <div class="upload-area" id="idUploadArea">
+                                                    <input
+                                                        type="file"
+                                                        name="id_document"
+                                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                                                        capture="environment"
+                                                        id="idUpload"
+                                                        onchange="handleFileUpload(this, 'idPreview')"
+                                                    >
+                                                    <label for="idUpload" class="upload-label">
+                                                        <div class="upload-icon">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="upload-text">
+                                                            <span class="upload-title">העלה קובץ או צלם במצלמה</span>
+                                                            <span class="upload-subtitle">גרור לכאן או לחץ להעלאה</span>
+                                                            <small class="file-restrictions">PDF או תמונה עד 3MB</small>
+                                                        </div>
+                                                    </label>
+                                                    <div id="idPreview" class="file-preview"></div>
+                                                </div>
+                                            </div>
+                                            <div class="upload-box">
+                                                <div class="upload-box-header">
+                                                    <label>רשיון נהיגה</label>
+                                                    <div class="upload-skip-option">
+                                                        <input type="checkbox" id="skipLicense" class="skip-upload">
+                                                        <label for="skipLicense">אשלים בהמשך</label>
+                                                    </div>
+                                                </div>
+                                                <p class="upload-subtitle">צד קדמי ואחורי בתוקף</p>
+                                                <div class="upload-area" id="licenseUploadArea">
+                                                    <input
+                                                        type="file"
+                                                        name="drivers_license"
+                                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                                                        capture="environment"
+                                                        id="licenseUpload"
+                                                        onchange="handleFileUpload(this, 'licensePreview')"
+                                                    >
+                                                    <label for="licenseUpload" class="upload-label">
+                                                        <div class="upload-icon">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="upload-text">
+                                                            <span class="upload-title">העלה קובץ או צלם במצלמה</span>
+                                                            <span class="upload-subtitle">גרור לכאן או לחץ להעלאה</span>
+                                                            <small class="file-restrictions">PDF או תמונה עד 3MB</small>
+                                                        </div>
+                                                    </label>
+                                                    <div id="licensePreview" class="file-preview"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-footer">
+                                    <button type="button" class="back-btn" onclick="prevStep(2)">חזור</button>
+                                    <button type="button" class="next-btn" onclick="nextStep(2)">המשך</button>
+                                </div>
+                            </div>
+                            <!-- Step 3: Identification Details -->
+                            <div class="form-step" id="step3">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>
+                                            מה שם המשפחה של אימך לפני הנישואים?
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="SingleLine"
+                                            placeholder="שם משפחה"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            מה שמה של סבתך מצד האם?
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="SingleLine2"
+                                            placeholder="שם סבתא"
+                                            required
+                                        >
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label class="checkbox terms-label">
+                                            <input type="checkbox" name="DecisionBox" required>
+                                            <span onclick="showPopup()">הריני מאשר לחברת תבל</span>
+                                            <span class="required">*</span>
+                                        </label>
+                                        <p class="terms" style="cursor: pointer;">
+                                            אני, הח"מ, מאשר בזאת לחברת תבל יבואני רכב בע"מ, ח.פ: 516997665, לגשת למידע האישי שלי דרך לשכת נתוני האשראי בישראל. אני מודע לכך שהמידע ייעשה בו שימוש לצורך בדיקת חיווי אשראי ראשונית למתן הלוואת מימון לרכב ואישורי את הסכמתי לכך.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-footer">
+                                    <button type="button" class="back-btn" onclick="prevStep(3)">חזרה</button>
+                                    <button type="button" class="submit-btn" onclick="submitForm()">שלח טופס</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-overlay" id="consentPopup">
+            <div class="popup-content">
+                <button class="popup-close" onclick="closePopup()">&times;</button>
+                <h2>הסכמה לקבלת דו"ח אשראי</h2>
+                <div class="consent-text">
+                    לשם בחינה מהירה ואיכותית של בקשת ההלוואה שלך, נבקשך לאשר לנו גישה לדו"ח נתוני האשראי כמפורט בטופס מטה.
+                    <br>
+                    <br>
+                    אני מסכים כי דו"ח אשראי לגבי מלשכת נתוני האשראי אשר כולל נתוני אשראי ממאגר נתוני האשראי שבבנק ישראל, יימסר לחברת תבל יבואני רכב בע"מ/מספר ח.פ: 516997665 לשם בחינת בקשתי להתקשר בעסקת/עסקאות אשראי כמפורט להלן:
+                    <br>
+                    <br>
+                    סוג העסקה: הלוואה
+                    <br>
+                    מטרת ההלוואה: רכישת רכב
+                    <br>
+                    בעסקה זו הלקוח חייב (לווה).
+                    <br>
+                    <br>
+                    אם העסקה לא תצא לפועל,
+                    <br>
+                    תום תוקף הסכמה יהיה למשך 60 ימים (תאריך פקיעת התוקף)
+                    <br>
+                    <br>
+                    ככל שהעסקה תצא לפועל,
+                    <br>
+                    הסכמתי זו תהיה בתוקף עד, המוקדם מבין, תום אותה עסקה או עד (תום העסקה).
+                    <br>
+                    <br>
+                    הסכמתי זו תאפשר ללשכת נתוני האשראי למסור לתבל יבואני רכב בע"מ, מספר ח.פ: 516997665 במהלך כל תקופה זו נתוני אשראי, או דו"ח אשראי לשם ניטור יכולתי להמשיך ולעמוד בתנאי העסקה.
+                    <br>
+                    <br>
+                    ידוע לי כי נתוני האשראי שבמאגר נתוני האשראי שבבנק ישראל, כוללים ידע בדבר עסקאות אשראי, וכן מידע בדבר הליכי חדלות פירעון ושיקום כלכלי, הליכי הוצאה לפועל והגבלות חשבון על פי חוק שיקים ללא כיסוי.
+                    <br>
+                    <br>
+                    הובא בזאת לתשומת ליבי כי הסכמתי כאמור, מאפשרת למשתמש בנתוני אשראי לקבל דירוג אשראי לגבי מלשכת אשראי, לתקופה שהוסכמה לעיל, והכל בכפוף לחוק.
+                    <br>
+                    <br>
+                    כמו כן ידוע לי שמסירת המידע תלויה בהסכמתי ואין אני חייב לתת הסכמה זו: תאריך מתן ההסכמה יום/חודש/שנה
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/he.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+        <script src="./js/script.js"></script>
+        <script>
+            // Initialize Flatpickr date picker
+            flatpickr("#birthDate", {
+                locale: "he",
+                dateFormat: "d/m/Y",
+                disableMobile: true
+            });
+
+            // Function to format birth date for form submission
+            function formatBirthDate(dateStr) {
+                if (!dateStr) return '';
+                const [day, month, year] = dateStr.split('/');
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+
+            // Update form submission to use new date format
+            let isSubmitting = false;
+
+            async function submitForm() {
+                if (isSubmitting) {
+                    return;
+                }
+                isSubmitting = true;
+
+                const form = document.getElementById('tevelForm');
+                const birthDate = document.getElementById('birthDate').value;
+                const formattedBirthDate = formatBirthDate(birthDate);
+                
+                // Get the form values
+                const fullName = document.querySelector('input[name="full_name"]').value;
+                const phone = document.querySelector('input[name="phone"]').value;
+                
+                // Set the hidden fields explicitly
+                document.getElementById('last_name_hidden').value = fullName;
+                document.getElementById('mobile_hidden').value = phone;
+                
+                // Double check that values are set
+                if (!document.getElementById('last_name_hidden').value || !document.getElementById('mobile_hidden').value) {
+                    alert('נא למלא את כל השדות הנדרשים');
+                    isSubmitting = false;
+                    return;
+                }
+                
+                try {
+                    // Convert files to base64
+                    const formData = new FormData(form);
+                    
+                    // Handle ID documents (front and back)
+                    if (uploadedFiles['idPreview'] && uploadedFiles['idPreview'].length > 0) {
+                        for (let i = 0; i < uploadedFiles['idPreview'].length; i++) {
+                            const idFile = uploadedFiles['idPreview'][i];
+                            const idBase64 = await fileToBase64(idFile);
+                            formData.append(`id_document_${i}`, idBase64);
+                            formData.append(`id_document_${i}_name`, idFile.name);
+                            formData.append(`id_document_${i}_type`, idFile.type);
+                        }
+                        formData.append('id_document_count', uploadedFiles['idPreview'].length.toString());
+                    }
+                    
+                    // Handle license documents (front and back)
+                    if (uploadedFiles['licensePreview'] && uploadedFiles['licensePreview'].length > 0) {
+                        for (let i = 0; i < uploadedFiles['licensePreview'].length; i++) {
+                            const licenseFile = uploadedFiles['licensePreview'][i];
+                            const licenseBase64 = await fileToBase64(licenseFile);
+                            formData.append(`drivers_license_${i}`, licenseBase64);
+                            formData.append(`drivers_license_${i}_name`, licenseFile.name);
+                            formData.append(`drivers_license_${i}_type`, licenseFile.type);
+                        }
+                        formData.append('drivers_license_count', uploadedFiles['licensePreview'].length.toString());
+                    }
+                    
+                    // Update birth date format
+                    formData.set('birth_date', formattedBirthDate);
+                    
+                    // Show thank you message before submission
+                    showThankYouMessage();
+                    
+                    // Submit form data to Make.com
+                    await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'no-cors'
+                    });
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('אירעה שגיאה בהעלאת הקבצים. אנא נסה שוב.');
+                } finally {
+                    isSubmitting = false;
+                }
+            }
+
+            // Function to convert file to base64
+            function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Function to show thank you message
+            function showThankYouMessage() {
+                const formContainer = document.querySelector('.form-container');
+                const heroMessages = document.querySelector('.hero-messages');
+                
+                // Update hero message
+                if (heroMessages) {
+                    heroMessages.innerHTML = `
+                        <p class="hero-message">
+                            לקוח יקר,<br>
+                            תודה רבה על זמנך היקר,<br>
+                            בעוד דקות ספורות תקבל תשובה עקרונית לגבי זכאותך למימון
+                        </p>
+                    `;
+                }
+                
+                // Update form container
+                formContainer.innerHTML = `
+                    <div class="thank-you-container" style="text-align: center; padding: 40px 20px;">
+                        <svg class="thank-you-icon" viewBox="0 0 24 24" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                            <path fill="#4CAF50" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h1 style="font-size: 24px; font-weight: 700; color: #2C3E50; margin-bottom: 16px;">תודה רבה!</h1>
+                        <p style="font-size: 18px; color: #34495E; line-height: 1.6;">
+                            פנייתך התקבלה בהצלחה.<br>
+                            נציג שלנו יצור איתך קשר בהקדם האפשרי.
+                        </p>
+                    </div>
+                `;
+                
+                // Trigger confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            // Store uploaded files for each upload area
+            const uploadedFiles = {};
+
+            function handleFileUpload(input, previewId) {
+                const previewArea = document.getElementById(previewId);
+                const files = input.files;
+                
+                if (files && files[0]) {
+                    const file = files[0];
+                    
+                    // Check file type
+                    const allowedTypes = [
+                        'application/pdf',
+                        'image/jpeg',
+                        'image/jpg',
+                        'image/png',
+                        'application/msword',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    ];
+                    
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('סוג הקובץ אינו נתמך. אנא העלה קובץ מסוג PDF, JPG, PNG, DOC או DOCX.');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // Check file size (4MB = 4 * 1024 * 1024 bytes)
+                    const maxSize = 4 * 1024 * 1024;
+                    if (file.size > maxSize) {
+                        alert('גודל הקובץ חורג מ-4MB המותרים. אנא העלה קובץ קטן יותר.');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // Initialize array for this upload area if it doesn't exist
+                    if (!uploadedFiles[previewId]) {
+                        uploadedFiles[previewId] = [];
+                    }
+                    
+                    // Check if file is already uploaded
+                    if (uploadedFiles[previewId].some(f => f.name === file.name)) {
+                        return; // Skip if file already exists
+                    }
+                    
+                    // Add file to our tracking array
+                    uploadedFiles[previewId].push(file);
+                    
+                    // Clear the preview area
+                    previewArea.innerHTML = '';
+                    
+                    // Create preview elements for all files
+                    uploadedFiles[previewId].forEach((uploadedFile, index) => {
+                        const previewElement = document.createElement('div');
+                        previewElement.className = 'file-item';
+                        
+                        if (uploadedFile.type.startsWith('image/')) {
+                            // For images, create a preview using FileReader
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                previewElement.appendChild(img);
+                            };
+                            reader.readAsDataURL(uploadedFile);
+                        } else {
+                            // For non-image files, show an icon
+                            const icon = document.createElement('div');
+                            icon.className = 'file-icon';
+                            if (uploadedFile.type === 'application/pdf') {
+                                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>';
+                            } else if (uploadedFile.type.includes('word')) {
+                                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>';
+                            }
+                            previewElement.appendChild(icon);
+                        }
+                        
+                        const fileName = document.createElement('div');
+                        fileName.className = 'file-name';
+                        fileName.textContent = uploadedFile.name;
+                        previewElement.appendChild(fileName);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-file';
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.onclick = function(e) {
+                            e.preventDefault();
+                            // Remove file from array
+                            uploadedFiles[previewId].splice(index, 1);
+                            // Refresh the preview
+                            handleFileUpload(input, previewId);
+                        };
+                        previewElement.appendChild(removeBtn);
+                        
+                        previewArea.appendChild(previewElement);
+                    });
+                    
+                    // Add "Upload another file" button if there's room for more files
+                    if (uploadedFiles[previewId].length < 2) { // Limit to 2 files
+                        const uploadAnotherBtn = document.createElement('button');
+                        uploadAnotherBtn.className = 'upload-another-btn';
+                        uploadAnotherBtn.innerHTML = 'העלה קובץ נוסף';
+                        uploadAnotherBtn.onclick = function(e) {
+                            e.preventDefault();
+                            input.click();
+                        };
+                        previewArea.appendChild(uploadAnotherBtn);
+                    }
+                    
+                    // Show preview area and hide upload label
+                    const uploadArea = input.closest('.upload-area');
+                    const uploadLabel = uploadArea.querySelector('.upload-label');
+                    uploadLabel.style.display = 'none';
+                    previewArea.style.display = 'block';
+                    
+                    // Clear the input
+                    input.value = '';
+                }
+                
+                // If no files are uploaded, show the original upload label
+                if (!uploadedFiles[previewId] || uploadedFiles[previewId].length === 0) {
+                    const uploadArea = input.closest('.upload-area');
+                    const uploadLabel = uploadArea.querySelector('.upload-label');
+                    uploadLabel.style.display = 'flex';
+                    previewArea.style.display = 'none';
+                    previewArea.innerHTML = '';
+                }
+            }
+
+            // Add this to your existing script section
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize file upload areas
+                const uploadAreas = document.querySelectorAll('.upload-area');
+                uploadAreas.forEach(area => {
+                    const input = area.querySelector('input[type="file"]');
+                    const previewArea = area.querySelector('.file-preview');
+                    const uploadLabel = area.querySelector('.upload-label');
+
+                    // Reset file upload areas to initial state
+                    input.value = '';
+                    previewArea.innerHTML = '';
+                    uploadLabel.style.display = 'flex';
+                    previewArea.style.display = 'none';
+                });
+            });
+        </script>
+        <style>
+            .file-preview {
+                display: none;
+                margin-top: 15px;
+                padding: 10px;
+                border-radius: 8px;
+                background: #f8f9fa;
+            }
+            
+            .file-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                background: white;
+                border-radius: 6px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                margin-bottom: 10px;
+            }
+            
+            .file-item:last-of-type {
+                margin-bottom: 15px;
+            }
+            
+            .file-item img {
+                max-width: 60px;
+                max-height: 60px;
+                border-radius: 4px;
+                margin-left: 10px;
+            }
+            
+            .file-icon {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #e9ecef;
+                border-radius: 4px;
+                margin-left: 10px;
+            }
+            
+            .file-name {
+                flex-grow: 1;
+                font-size: 14px;
+                color: #495057;
+            }
+            
+            .remove-file {
+                background: none;
+                border: none;
+                color: #dc3545;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0 8px;
+            }
+            
+            .remove-file:hover {
+                color: #c82333;
+            }
+            
+            .upload-area {
+                position: relative;
+            }
+            
+            .upload-label {
+                display: flex;
+                cursor: pointer;
+            }
+
+            .upload-another-btn {
+                display: block;
+                width: 100%;
+                padding: 12px;
+                background: #f8f9fa;
+                border: 1px dashed #dee2e6;
+                border-radius: 6px;
+                color: #495057;
+                font-size: 14px;
+                cursor: pointer;
+                text-align: center;
+                transition: all 0.2s ease;
+            }
+            
+            .upload-another-btn:hover {
+                background: #e9ecef;
+                border-color: #adb5bd;
+                color: #212529;
+            }
+
+            /* Date Picker Styles */
+            .flatpickr-calendar {
+                font-family: var(--font-family);
+                direction: rtl;
+                background: white;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                border-radius: 12px;
+                border: none;
+                padding: 15px;
+            }
+
+            .flatpickr-months {
+                margin-bottom: 10px;
+            }
+
+            .flatpickr-current-month {
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: var(--gray-900);
+            }
+
+            .flatpickr-monthDropdown-months {
+                font-family: var(--font-family);
+                font-weight: 500;
+            }
+
+            .flatpickr-weekday {
+                font-family: var(--font-family);
+                font-weight: 500;
+                color: var(--gray-600);
+            }
+
+            .flatpickr-day {
+                font-family: var(--font-family);
+                border-radius: 8px;
+                color: var(--gray-700);
+                transition: all 0.2s ease;
+            }
+
+            .flatpickr-day:hover {
+                background: var(--gray-100);
+                border-color: var(--gray-200);
+            }
+
+            .flatpickr-day.selected {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+            }
+
+            .flatpickr-day.selected:hover {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: white;
+                filter: brightness(1.1);
+            }
+
+            .flatpickr-day.today {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .flatpickr-months .flatpickr-prev-month, 
+            .flatpickr-months .flatpickr-next-month {
+                fill: var(--gray-600);
+                padding: 10px;
+                transition: all 0.2s ease;
+            }
+
+            .flatpickr-months .flatpickr-prev-month:hover, 
+            .flatpickr-months .flatpickr-next-month:hover {
+                fill: var(--primary);
+            }
+
+            .numInputWrapper {
+                position: relative;
+                height: 100%;
+                direction: ltr;
+            }
+
+            .numInputWrapper span {
+                position: absolute;
+                right: 0;
+                width: 14px;
+                padding: 0 4px 0 2px;
+                height: 50%;
+                line-height: 26px;
+                opacity: 0;
+                cursor: pointer;
+                border: 1px solid rgba(72,72,72,0.15);
+                box-sizing: border-box;
+            }
+
+            .numInputWrapper span:hover {
+                background: rgba(0,0,0,0.1);
+            }
+
+            .numInputWrapper span.arrowUp {
+                top: 0;
+                border-bottom: 0;
+            }
+
+            .numInputWrapper span.arrowDown {
+                top: 50%;
+            }
+
+            .numInputWrapper span:after {
+                content: "";
+                position: absolute;
+                top: 33%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border: 4px solid transparent;
+            }
+
+            .numInputWrapper span.arrowUp:after {
+                border-bottom-color: rgba(72,72,72,0.6);
+                top: 40%;
+            }
+
+            .numInputWrapper span.arrowDown:after {
+                border-top-color: rgba(72,72,72,0.6);
+                top: 60%;
+            }
+
+            .numInputWrapper span:hover:after {
+                border-top-color: rgba(72,72,72,0.9);
+                border-bottom-color: rgba(72,72,72,0.9);
+            }
+
+            .flatpickr-input {
+                cursor: pointer;
+                background: var(--gray-100) !important;
+            }
+
+            .flatpickr-input:focus {
+                background: var(--white) !important;
+            }
+        </style>
+    </body>
+</html>
