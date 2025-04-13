@@ -10,6 +10,27 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <link rel="stylesheet" href="./css/styles.css">
+        <script src="https://uploadthing.com/ut-core.js"></script>
+        <script>
+            let utClient;
+            let uploadedFiles = {}; // Store uploaded file URLs
+            
+            async function initializeUploadThing() {
+                try {
+                    const response = await fetch('/api/config');
+                    const config = await response.json();
+                    
+                    utClient = new UTCore({
+                        appId: config.appId
+                    });
+                } catch (error) {
+                    console.error('Failed to initialize UploadThing:', error);
+                }
+            }
+            
+            // Initialize UploadThing when the page loads
+            document.addEventListener('DOMContentLoaded', initializeUploadThing);
+        </script>
     </head>
     <body>
         <header class="main-header">
@@ -560,7 +581,7 @@
             }
 
             // Store uploaded files for each upload area
-            const uploadedFiles = {};
+            // const uploadedFiles = {}; // Removing this line as it's already declared above
 
             function handleFileUpload(input, previewId) {
                 const previewArea = document.getElementById(previewId);
