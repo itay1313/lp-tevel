@@ -10,19 +10,29 @@ export const ourFileRouter = {
     "application/pdf": { maxFileSize: "4MB", maxFileCount: 4 }
   })
     .middleware(({ req }) => {
+      // This code runs on your server before upload
       return { uploadedBy: "guest" };
     })
     .onUploadComplete(async ({ metadata, file }) => {
+      // This code RUNS ON YOUR SERVER after upload
       console.log("Upload complete for file:", file.name);
       console.log("File URL:", file.url);
       return { url: file.url };
     })
 };
 
+// Export config helper
+export const config = {
+  api: {
+    bodyParser: false
+  }
+};
+
+// Export handler
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const response = await ourFileRouter.documentUploader(req, res);
+      const response = await ourFileRouter.documentUploader(req);
       return res.status(200).json(response);
     } catch (error) {
       console.error("Error in upload:", error);

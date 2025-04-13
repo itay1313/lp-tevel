@@ -163,9 +163,15 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
               uploadFormData.append('file', file);
 
               // Upload to UploadThing
-              const response = await fetch('/api/upload?input=documentUploader', {
+              const response = await fetch('/api/uploadthing', {
                 method: 'POST',
-                body: uploadFormData
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  files: [file],
+                  route: 'documentUploader'
+                })
               });
 
               if (!response.ok) {
@@ -205,9 +211,15 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
               uploadFormData.append('file', file);
 
               // Upload to UploadThing
-              const response = await fetch('/api/upload?input=documentUploader', {
+              const response = await fetch('/api/uploadthing', {
                 method: 'POST',
-                body: uploadFormData
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  files: [file],
+                  route: 'documentUploader'
+                })
               });
 
               if (!response.ok) {
