@@ -19,8 +19,9 @@
                     const response = await fetch('/api/config');
                     const config = await response.json();
                     
-                    window.utClient = new window.UTCore({
-                        appId: config.appId
+                    // Initialize UploadThing client with the correct method
+                    window.utClient = new window.UploadThing({
+                        apiKey: config.appId
                     });
                 } catch (error) {
                     console.error('Failed to initialize UploadThing:', error);
