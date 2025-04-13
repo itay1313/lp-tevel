@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="./css/styles.css">
         <script src="https://uploadthing.com/ut-core.js"></script>
         <script>
-            let utClient;
             let uploadedFiles = {}; // Store uploaded file URLs
             
             async function initializeUploadThing() {
@@ -20,7 +19,7 @@
                     const response = await fetch('/api/config');
                     const config = await response.json();
                     
-                    utClient = new UTCore({
+                    window.utClient = new window.UTCore({
                         appId: config.appId
                     });
                 } catch (error) {
