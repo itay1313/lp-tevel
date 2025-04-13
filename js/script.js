@@ -97,105 +97,122 @@ function prevStep(currentStep) {
   }
 }
 
-// Initialize UploadThing client
-let utClient;
+// Global object to store uploaded files
+const uploadedFiles = {
+  idPreview: [],
+  licensePreview: []
+};
 
-async function initializeUploadThing() {
-  try {
-    const response = await fetch('/api/config');
-    const config = await response.json();
-
-    utClient = new UTCore({
-      apiKey: process.env.UPLOADTHING_SECRET, // This will be handled by the server
-      appId: config.appId
-    });
-  } catch (error) {
-    console.error('Failed to initialize UploadThing:', error);
-  }
+// Function to convert file to base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-// Call this when the page loads
-document.addEventListener('DOMContentLoaded', initializeUploadThing);
-
-// Function to handle file uploads
+// Unified file upload handler
 async function handleFileUpload(input, previewId) {
+  const previewArea = document.getElementById(previewId);
   const files = input.files;
-  const previewContainer = document.getElementById(previewId);
-  previewContainer.innerHTML = '';
 
   if (!files || files.length === 0) return;
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  // Initialize array for this upload area if it doesn't exist
+  if (!uploadedFiles[previewId]) {
+    uploadedFiles[previewId] = [];
+  }
 
-    // Validate file size (4MB limit)
-    if (file.size > 4 * 1024 * 1024) {
-      showMessage('קובץ גדול מדי. גודל מקסימלי: 4MB', 'error');
-      return;
-    }
+  // Clear existing previews
+  previewArea.innerHTML = '';
 
+  // Process each file
+  for (const file of files) {
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-    if (!validTypes.includes(file.type)) {
-      showMessage('סוג קובץ לא חוקי. אנא העלה תמונה או PDF', 'error');
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/jpg',
+      'image/png'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      showMessage('סוג הקובץ אינו נתמך. אנא העלה קובץ מסוג PDF, JPG או PNG.', 'error');
+      input.value = '';
       return;
     }
 
-    // Create preview
-    const previewDiv = document.createElement('div');
-    previewDiv.className = 'file-preview-item';
+    // Check file size (4MB limit)
+    const maxSize = 4 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showMessage('גודל הקובץ חורג מ-4MB המותרים. אנא העלה קובץ קטן יותר.', 'error');
+      input.value = '';
+      return;
+    }
 
-    if (file.type.startsWith('image/')) {
+    // Add file to uploaded files array
+    uploadedFiles[previewId].push(file);
+
+    // Create preview element
+    const previewElement = document.createElement('div');
+    previewElement.className = 'file-item';
+
+    // Add file icon
+    const icon = document.createElement('div');
+    icon.className = 'file-icon';
+    if (file.type === 'application/pdf') {
+      icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>';
+    } else {
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
-      previewDiv.appendChild(img);
-    } else {
-      const pdfIcon = document.createElement('div');
-      pdfIcon.className = 'pdf-icon';
-      pdfIcon.textContent = 'PDF';
-      previewDiv.appendChild(pdfIcon);
+      img.style.maxWidth = '60px';
+      img.style.maxHeight = '60px';
+      icon.appendChild(img);
     }
+    previewElement.appendChild(icon);
 
-    const fileName = document.createElement('span');
+    // Add file name
+    const fileName = document.createElement('div');
     fileName.className = 'file-name';
     fileName.textContent = file.name;
-    previewDiv.appendChild(fileName);
+    previewElement.appendChild(fileName);
 
+    // Add remove button
     const removeBtn = document.createElement('button');
     removeBtn.className = 'remove-file';
     removeBtn.innerHTML = '&times;';
-    removeBtn.onclick = () => removeFile(previewDiv, input.id, previewId);
-    previewDiv.appendChild(removeBtn);
-
-    previewContainer.appendChild(previewDiv);
-
-    // Upload to UploadThing
-    try {
-      const { data, error } = await utClient.uploadFiles({
-        files: [file],
-        endpoint: "documentUploader"
-      });
-
-      if (error) {
-        console.error('Upload error:', error);
-        showMessage('שגיאה בהעלאת הקובץ. אנא נסה שוב.', 'error');
-        return;
+    removeBtn.onclick = function (e) {
+      e.preventDefault();
+      const index = uploadedFiles[previewId].indexOf(file);
+      if (index > -1) {
+        uploadedFiles[previewId].splice(index, 1);
       }
+      previewElement.remove();
 
-      if (data?.[0]?.url) {
-        // Store the URL in a hidden input
-        const urlInput = document.createElement('input');
-        urlInput.type = 'hidden';
-        urlInput.name = `${input.name}_url`;
-        urlInput.value = data[0].url;
-        previewDiv.appendChild(urlInput);
-
-        console.log('File uploaded successfully:', data[0].url);
+      if (uploadedFiles[previewId].length === 0) {
+        previewArea.classList.remove('has-files');
       }
-    } catch (error) {
-      console.error('Upload error:', error);
-      showMessage('שגיאה בהעלאת הקובץ. אנא נסה שוב.', 'error');
-    }
+    };
+    previewElement.appendChild(removeBtn);
+
+    previewArea.appendChild(previewElement);
+  }
+
+  // Show preview area
+  previewArea.classList.add('has-files');
+
+  // Add "Upload another file" button if there's room for more files
+  if (uploadedFiles[previewId].length < 2) {
+    const uploadAnotherBtn = document.createElement('button');
+    uploadAnotherBtn.className = 'upload-another-btn';
+    uploadAnotherBtn.innerHTML = 'העלה קובץ נוסף';
+    uploadAnotherBtn.onclick = function (e) {
+      e.preventDefault();
+      input.click();
+    };
+    previewArea.appendChild(uploadAnotherBtn);
   }
 }
 
@@ -210,100 +227,53 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   // Create FormData object
   const formData = new FormData(this);
 
-  // Get all file URLs
-  const idDocumentUrls = Array.from(document.querySelectorAll('input[name="id_document_url"]')).map(input => input.value);
-  const licenseUrls = Array.from(document.querySelectorAll('input[name="drivers_license_url"]')).map(input => input.value);
-
-  // Add URLs to form data
-  formData.append('id_document_urls', JSON.stringify(idDocumentUrls));
-  formData.append('drivers_license_urls', JSON.stringify(licenseUrls));
-
-  // Prepare the data object
-  const data = {
-    Lead_Source: "Online Form",
-    Last_Name: formData.get('full_name') || '',
-    Email: formData.get('email') || '',
-    Phone: formData.get('phone') || '',
-    Company: formData.get('workplace') || '',
-    Monthly_Income: formData.get('monthly_income') || '',
-    Bank_Code: formData.get('bank_code') || '',
-    Bank_Branch: formData.get('branch_number') || '',
-    Bank_Account: formData.get('account_number') || '',
-    Credit_Card: formData.get('credit_card')?.replace(/\s/g, '') || '',
-    Birth_Date: formatBirthDate(
-      formData.get('birth_day'),
-      formData.get('birth_month'),
-      formData.get('birth_year')
-    ),
-    Mother_Name: formData.get('SingleLine') || '',
-    Grandmother_Name: formData.get('SingleLine2') || '',
-    Consent_Approved: formData.get('creditConsent') === 'on' ? 'Yes' : 'No',
-    Terms_Accepted: formData.get('DecisionBox') === 'on' ? 'Yes' : 'No'
-  };
-
-  const submitBtn = document.querySelector('.submit-btn');
-  const originalText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
-  submitBtn.disabled = true;
-
   try {
-    // Add all non-file data to the FormData
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+    // Show loading state
+    const submitBtn = document.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
+    submitBtn.disabled = true;
 
-    // Send form data with file URLs to Make.com
+    // Convert and add ID documents to form data
+    if (uploadedFiles['idPreview'] && uploadedFiles['idPreview'].length > 0) {
+      for (let i = 0; i < uploadedFiles['idPreview'].length; i++) {
+        const file = uploadedFiles['idPreview'][i];
+        const base64Data = await fileToBase64(file);
+        formData.append(`id_document_${i}`, base64Data);
+        formData.append(`id_document_${i}_name`, file.name);
+        formData.append(`id_document_${i}_type`, file.type);
+      }
+      formData.append('id_document_count', uploadedFiles['idPreview'].length.toString());
+    }
+
+    // Convert and add license documents to form data
+    if (uploadedFiles['licensePreview'] && uploadedFiles['licensePreview'].length > 0) {
+      for (let i = 0; i < uploadedFiles['licensePreview'].length; i++) {
+        const file = uploadedFiles['licensePreview'][i];
+        const base64Data = await fileToBase64(file);
+        formData.append(`drivers_license_${i}`, base64Data);
+        formData.append(`drivers_license_${i}_name`, file.name);
+        formData.append(`drivers_license_${i}_type`, file.type);
+      }
+      formData.append('drivers_license_count', uploadedFiles['licensePreview'].length.toString());
+    }
+
+    // Submit form data
     const response = await fetch(this.action, {
       method: 'POST',
-      body: formData
+      body: formData,
+      mode: 'no-cors'
     });
 
-    if (response.ok) {
-      // Hide all form steps
-      document.querySelectorAll('.form-step').forEach(step => {
-        step.style.display = 'none';
-      });
+    // Show success message
+    showThankYouMessage();
 
-      // Show success message
-      const successMessage = document.createElement('div');
-      successMessage.className = 'success-message';
-      successMessage.innerHTML = `
-        <div class="success-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#4CAF50"/>
-          </svg>
-        </div>
-        <h2>תודה רבה!</h2>
-        <p>הטופס נשלח בהצלחה</p>
-        <p class="success-details">נציג יצור איתך קשר בהקדם להמשך התהליך</p>
-      `;
-
-      // Insert success message before the form
-      const formContainer = document.querySelector('.form-container');
-      formContainer.insertBefore(successMessage, this);
-
-      // Trigger confetti
-      triggerConfetti();
-
-      // Reset form after 5 seconds
-      setTimeout(() => {
-        this.reset();
-        successMessage.remove();
-        document.querySelectorAll('.form-step').forEach(step => {
-          step.style.display = 'block';
-        });
-        document.getElementById('step1').classList.add('active');
-        document.getElementById('step3').classList.remove('active');
-        updateProgressBar(1);
-      }, 5000);
-
-    } else {
-      throw new Error('שגיאה בשליחת הטופס');
-    }
   } catch (error) {
-    console.error('Form submission error:', error);
-    showMessage('שגיאה בשליחת הטופס. אנא נסה שוב.', 'error');
+    console.error('Error:', error);
+    showMessage('אירעה שגיאה בהעלאת הקבצים. אנא נסה שוב.', 'error');
   } finally {
+    // Reset submit button
+    const submitBtn = document.querySelector('.submit-btn');
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
   }
@@ -418,55 +388,6 @@ function validateFileUpload(input, maxSizeMB) {
   }
 
   return true;
-}
-
-function handleFileUpload(input, previewId) {
-  const previewDiv = document.getElementById(previewId);
-
-  if (input.files && input.files.length > 0) {
-    previewDiv.classList.add('has-files');
-
-    // Get existing files count
-    const existingFiles = previewDiv.children.length;
-
-    // Add new files
-    Array.from(input.files).forEach(file => {
-      const fileItem = document.createElement('div');
-      fileItem.className = 'file-item';
-
-      const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-
-      fileItem.innerHTML = `
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-        </svg>
-        <span>${file.name} (${fileSize} MB)</span>
-        <span class="remove-file" onclick="removeFile(this, '${input.id}', '${previewId}')">×</span>
-      `;
-
-      previewDiv.appendChild(fileItem);
-    });
-  } else {
-    previewDiv.classList.remove('has-files');
-  }
-}
-
-function removeFile(element, inputId, previewId) {
-  const input = document.getElementById(inputId);
-  const previewDiv = document.getElementById(previewId);
-
-  // Remove the file item from preview with animation
-  const fileItem = element.parentElement;
-  fileItem.style.opacity = '0';
-  fileItem.style.transform = 'translateX(20px)';
-
-  setTimeout(() => {
-    fileItem.remove();
-    // If no more files, hide preview
-    if (previewDiv.children.length === 0) {
-      previewDiv.classList.remove('has-files');
-    }
-  }, 300);
 }
 
 // Bank selection functionality
@@ -671,17 +592,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeFileUploads();
   initializeCreditCardValidation();
   // ... existing initialization code ...
-});
-
-// Helper function to convert file to base64
-async function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64String = reader.result.split(',')[1];
-      resolve(base64String);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-} 
+}); 
