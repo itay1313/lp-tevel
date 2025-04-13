@@ -162,28 +162,35 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
               const uploadFormData = new FormData();
               uploadFormData.append('file', file);
 
+              console.log('Attempting to upload file:', file.name);
+
               // Upload to UploadThing
               const response = await fetch('/api/uploadthing', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                  'x-uploadthing-version': '4.1.3'
                 },
-                body: JSON.stringify({
-                  files: [file],
-                  route: 'documentUploader'
-                })
+                body: uploadFormData
               });
 
+              console.log('Upload response status:', response.status);
+
               if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Upload failed');
+                const errorData = await response.json();
+                console.error('Upload error response:', errorData);
+                throw new Error(errorData.error || 'Upload failed');
               }
 
               const uploadData = await response.json();
+              console.log('Upload success response:', uploadData);
+
               if (uploadData.url) {
                 uploadedUrls.idDocuments.push(uploadData.url);
                 submitFormData.append(`ID_Document_URL_${i}`, uploadData.url);
                 console.log('Successfully uploaded ID document:', uploadData.url);
+              } else {
+                console.error('No URL in upload response:', uploadData);
+                throw new Error('No URL received from upload');
               }
             } catch (error) {
               console.error('Error uploading ID document:', error);
@@ -208,18 +215,12 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
           if (file instanceof File && file.size > 0) {
             try {
               const uploadFormData = new FormData();
-              uploadFormData.append('file', file);
+              uploadFormData.append('files', file);
 
               // Upload to UploadThing
               const response = await fetch('/api/uploadthing', {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  files: [file],
-                  route: 'documentUploader'
-                })
+                body: uploadFormData
               });
 
               if (!response.ok) {

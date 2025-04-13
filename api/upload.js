@@ -1,23 +1,20 @@
 import { createUploadthing } from "uploadthing/next";
 import { UTApi } from "uploadthing/server";
 
-const utapi = new UTApi();
 const f = createUploadthing();
 
+// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   documentUploader: f({
-    "image/*": { maxFileSize: "4MB", maxFileCount: 4 },
-    "application/pdf": { maxFileSize: "4MB", maxFileCount: 4 }
+    image: { maxFileSize: "4MB", maxFileCount: 4 },
+    pdf: { maxFileSize: "4MB", maxFileCount: 4 }
   })
-    .middleware(({ req }) => {
-      // This code runs on your server before upload
+    .middleware(() => {
       return { uploadedBy: "guest" };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for file:", file.name);
-      console.log("File URL:", file.url);
-      return { url: file.url };
+    .onUploadComplete((data) => {
+      console.log("Upload complete:", data);
+      return { url: data.file.url };
     })
 };
 
@@ -32,8 +29,19 @@ export const config = {
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const response = await ourFileRouter.documentUploader(req);
-      return res.status(200).json(response);
+      // Get the file from the request
+      const file = req.files?.[0];
+      if (!file) {
+        return res.status(400).json({ error: "No file provided" });
+      }
+
+      // Upload using UploadThing
+      const result = await ourFileRouter.documentUploader.upload({
+        file,
+        input: { uploadedBy: "guest" }
+      });
+
+      return res.status(200).json(result);
     } catch (error) {
       console.error("Error in upload:", error);
       return res.status(500).json({ error: error.message });
