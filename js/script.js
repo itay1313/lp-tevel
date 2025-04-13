@@ -97,14 +97,6 @@ function prevStep(currentStep) {
   }
 }
 
-// Load environment variables
-const config = {
-  uploadThing: {
-    apiKey: process.env.UPLOADTHING_API_KEY || '',
-    appId: process.env.UPLOADTHING_APP_ID || ''
-  }
-};
-
 // Form submission handling
 document.getElementById('tevelForm').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -116,211 +108,53 @@ document.getElementById('tevelForm').addEventListener('submit', async function (
   // Create FormData object
   const formData = new FormData(this);
 
-  // Prepare the data object
-  const data = {
-    Lead_Source: "Online Form",
-    Last_Name: formData.get('full_name') || '',
-    Email: formData.get('email') || '',
-    Phone: formData.get('phone') || '',
-    Company: formData.get('workplace') || '',
-    Monthly_Income: formData.get('monthly_income') || '',
-    Bank_Code: formData.get('bank_code') || '',
-    Bank_Branch: formData.get('branch_number') || '',
-    Bank_Account: formData.get('account_number') || '',
-    Credit_Card: formData.get('credit_card')?.replace(/\s/g, '') || '',
-    Birth_Date: formatBirthDate(
-      formData.get('birth_day'),
-      formData.get('birth_month'),
-      formData.get('birth_year')
-    ),
-    Mother_Name: formData.get('SingleLine') || '',
-    Grandmother_Name: formData.get('SingleLine2') || '',
-    Consent_Approved: formData.get('creditConsent') === 'on' ? 'Yes' : 'No',
-    Terms_Accepted: formData.get('DecisionBox') === 'on' ? 'Yes' : 'No'
-  };
-
-  // Add files if they exist and are not skipped
-  if (!document.getElementById('skipId')?.checked) {
-    const idFiles = formData.getAll('id_document');
-    if (idFiles && idFiles.length > 0) {
-      for (let i = 0; i < idFiles.length; i++) {
-        const file = idFiles[i];
-        if (file instanceof File && file.size > 0) {
-          data.ID_Document = file;
-        }
-      }
-    }
-  }
-
-  if (!document.getElementById('skipLicense')?.checked) {
-    const licenseFiles = formData.getAll('drivers_license');
-    if (licenseFiles && licenseFiles.length > 0) {
-      for (let i = 0; i < licenseFiles.length; i++) {
-        const file = licenseFiles[i];
-        if (file instanceof File && file.size > 0) {
-          data.Drivers_License = file;
-        }
-      }
-    }
-  }
-
-  const submitBtn = document.querySelector('.submit-btn');
-  const originalText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
-  submitBtn.disabled = true;
-
   try {
-    // Create a new FormData object for the actual submission
-    const submitFormData = new FormData();
+    // Show loading state
+    const submitBtn = document.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> שולח...';
+    submitBtn.disabled = true;
 
-    // Add all non-file data to the FormData
-    Object.entries(data).forEach(([key, value]) => {
-      if (!(value instanceof File)) {
-        submitFormData.append(key, value);
+    // Convert and add ID documents to form data
+    if (uploadedFiles['idPreview'] && uploadedFiles['idPreview'].length > 0) {
+      for (let i = 0; i < uploadedFiles['idPreview'].length; i++) {
+        const file = uploadedFiles['idPreview'][i];
+        const base64Data = await fileToBase64(file);
+        formData.append(`id_document_${i}`, base64Data);
+        formData.append(`id_document_${i}_name`, file.name);
+        formData.append(`id_document_${i}_type`, file.type);
       }
-    });
-
-    // Upload files to UploadThing first
-    const uploadedUrls = {
-      idDocuments: [],
-      licenseDocuments: []
-    };
-
-    // Handle ID Document files
-    const idFiles = formData.getAll('id_document');
-    if (idFiles && idFiles.length > 0) {
-      for (let i = 0; i < idFiles.length; i++) {
-        const file = idFiles[i];
-        if (file instanceof File && file.size > 0) {
-          try {
-            const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
-            uploadFormData.append('fileKey', `id_document_${i}`);
-
-            const response = await fetch('https://uploadthing.com/upload', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${config.uploadThing.apiKey}`,
-                'X-Uploadthing-App-Id': config.uploadThing.appId
-              },
-              body: uploadFormData
-            });
-
-            const uploadData = await response.json();
-            if (uploadData.url) {
-              uploadedUrls.idDocuments.push(uploadData.url);
-              submitFormData.append(`ID_Document_URL_${i}`, uploadData.url);
-            }
-          } catch (error) {
-            console.error('Error uploading ID document:', error);
-            showMessage('שגיאה בהעלאת תעודת זהות. אנא נסה שוב.', 'error');
-          }
-        }
-      }
-      submitFormData.append('ID_Document_URLs', JSON.stringify(uploadedUrls.idDocuments));
-      submitFormData.append('ID_Document_count', uploadedUrls.idDocuments.length.toString());
+      formData.append('id_document_count', uploadedFiles['idPreview'].length.toString());
     }
 
-    // Handle Driver's License files
-    const licenseFiles = formData.getAll('drivers_license');
-    if (licenseFiles && licenseFiles.length > 0) {
-      for (let i = 0; i < licenseFiles.length; i++) {
-        const file = licenseFiles[i];
-        if (file instanceof File && file.size > 0) {
-          try {
-            const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
-            uploadFormData.append('fileKey', `drivers_license_${i}`);
-
-            const response = await fetch('https://uploadthing.com/upload', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${config.uploadThing.apiKey}`,
-                'X-Uploadthing-App-Id': config.uploadThing.appId
-              },
-              body: uploadFormData
-            });
-
-            const uploadData = await response.json();
-            if (uploadData.url) {
-              uploadedUrls.licenseDocuments.push(uploadData.url);
-              submitFormData.append(`Drivers_License_URL_${i}`, uploadData.url);
-            }
-          } catch (error) {
-            console.error('Error uploading license document:', error);
-            showMessage('שגיאה בהעלאת רישיון נהיגה. אנא נסה שוב.', 'error');
-          }
-        }
+    // Convert and add license documents to form data
+    if (uploadedFiles['licensePreview'] && uploadedFiles['licensePreview'].length > 0) {
+      for (let i = 0; i < uploadedFiles['licensePreview'].length; i++) {
+        const file = uploadedFiles['licensePreview'][i];
+        const base64Data = await fileToBase64(file);
+        formData.append(`drivers_license_${i}`, base64Data);
+        formData.append(`drivers_license_${i}_name`, file.name);
+        formData.append(`drivers_license_${i}_type`, file.type);
       }
-      submitFormData.append('Drivers_License_URLs', JSON.stringify(uploadedUrls.licenseDocuments));
-      submitFormData.append('Drivers_License_count', uploadedUrls.licenseDocuments.length.toString());
+      formData.append('drivers_license_count', uploadedFiles['licensePreview'].length.toString());
     }
 
-    // Only proceed with form submission if all files were uploaded successfully
-    if ((idFiles.length > 0 && uploadedUrls.idDocuments.length === 0) ||
-      (licenseFiles.length > 0 && uploadedUrls.licenseDocuments.length === 0)) {
-      showMessage('שגיאה בהעלאת הקבצים. אנא נסה שוב.', 'error');
-      return;
-    }
-
-    // Add the required Zoho parameters
-    submitFormData.append('xnQsjsdp', formData.get('xnQsjsdp'));
-    submitFormData.append('zc_gad', formData.get('zc_gad'));
-    submitFormData.append('xmIwtLD', formData.get('xmIwtLD'));
-    submitFormData.append('actionType', formData.get('actionType'));
-    submitFormData.append('returnURL', formData.get('returnURL'));
-
-    // Send form data with file URLs to Make.com
+    // Submit form data
     const response = await fetch(this.action, {
       method: 'POST',
-      body: submitFormData
+      body: formData,
+      mode: 'no-cors'
     });
 
-    if (response.ok) {
-      // Hide all form steps
-      document.querySelectorAll('.form-step').forEach(step => {
-        step.style.display = 'none';
-      });
+    // Show success message
+    showThankYouMessage();
 
-      // Show success message
-      const successMessage = document.createElement('div');
-      successMessage.className = 'success-message';
-      successMessage.innerHTML = `
-        <div class="success-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#4CAF50"/>
-          </svg>
-        </div>
-        <h2>תודה רבה!</h2>
-        <p>הטופס נשלח בהצלחה</p>
-        <p class="success-details">נציג יצור איתך קשר בהקדם להמשך התהליך</p>
-      `;
-
-      // Insert success message before the form
-      const formContainer = document.querySelector('.form-container');
-      formContainer.insertBefore(successMessage, this);
-
-      // Trigger confetti
-      triggerConfetti();
-
-      // Reset form after 5 seconds
-      setTimeout(() => {
-        this.reset();
-        successMessage.remove();
-        document.querySelectorAll('.form-step').forEach(step => {
-          step.style.display = 'block';
-        });
-        document.getElementById('step1').classList.add('active');
-        document.getElementById('step3').classList.remove('active');
-        updateProgressBar(1);
-      }, 5000);
-
-    } else {
-      throw new Error('שגיאה בשליחת הטופס');
-    }
   } catch (error) {
-    console.error('Form submission error:', error);
+    console.error('Error:', error);
+    showMessage('אירעה שגיאה בהעלאת הקבצים. אנא נסה שוב.', 'error');
   } finally {
+    // Reset submit button
+    const submitBtn = document.querySelector('.submit-btn');
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
   }
